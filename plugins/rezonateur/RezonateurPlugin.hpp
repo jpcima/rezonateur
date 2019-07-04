@@ -1,6 +1,7 @@
 #pragma once
 #include "DistrhoPlugin.hpp"
 #include "RezonateurShared.hpp"
+#include "Rezonateur.h"
 #include <cstdint>
 
 class RezonateurPlugin : public Plugin {
@@ -24,4 +25,5 @@ public:
 
 private:
     bool fBypassed;
+    Rezonateur fRez;
 };

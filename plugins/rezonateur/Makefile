@@ -19,17 +19,24 @@ NAME = rezonateur
 
 FILES_DSP = \
 	RezonateurPlugin.cpp \
-	RezonateurShared.cpp
+	RezonateurShared.cpp \
+	sources/Rezonateur.cpp \
+	sources/svf/VAStateVariableFilter.cpp
 
 FILES_UI  = \
 	RezonateurUI.cpp \
-	RezonateurShared.cpp
+	RezonateurShared.cpp \
+	components/ResponseView.cpp \
+	sources/Rezonateur.cpp \
+	sources/svf/VAStateVariableFilter.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
 UI_TYPE = cairo
 include ../../dpf/Makefile.plugins.mk
+
+BUILD_CXX_FLAGS += -Isources -Ithirdparty/blink
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

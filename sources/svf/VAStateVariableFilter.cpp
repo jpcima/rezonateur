@@ -222,7 +222,6 @@ std::complex<double> VAStateVariableFilter::calcTransferUnitGainBandpass(double 
 
 std::complex<double> VAStateVariableFilter::calcTransferBandShelving(double w, double wc, double r, double k)
 {
-    std::complex<double> s = w * std::complex<double>(0, 1);
     return 1.0 + k * calcTransferUnitGainBandpass(w, wc, r);
 }
 

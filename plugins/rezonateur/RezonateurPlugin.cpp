@@ -1,9 +1,12 @@
 #include "RezonateurPlugin.hpp"
+#include "DenormalDisabler.h"
 #include <cstring>
 
 RezonateurPlugin::RezonateurPlugin()
     : Plugin(Parameter_Count, DISTRHO_PLUGIN_NUM_PROGRAMS, State_Count)
 {
+    fRez.init(getSampleRate());
+
     for (unsigned p = 0; p < Parameter_Count; ++p) {
         Parameter param;
         InitParameter(p, param);
@@ -86,8 +89,11 @@ void RezonateurPlugin::run(const float **inputs, float **outputs, uint32_t frame
         return;
     }
 
-    #warning TODO implement me 
-    memset(output, 0, frames * sizeof(float));
+    WebCore::DenormalDisabler noDenormals;
+
+    Rezonateur &rez = fRez;
+    for (uint32_t i = 0; i < frames; ++i)
+        output[i] = rez.process(input[i]);
 }
 
 ///
