@@ -92,8 +92,7 @@ void RezonateurPlugin::run(const float **inputs, float **outputs, uint32_t frame
     WebCore::DenormalDisabler noDenormals;
 
     Rezonateur &rez = fRez;
-    for (uint32_t i = 0; i < frames; ++i)
-        output[i] = rez.process(input[i]);
+    rez.process(input, output, frames);
 }
 
 ///

@@ -11,6 +11,12 @@
 #include "VAStateVariableFilter.h"
 #include <cmath>
 
+#if __cplusplus >= 201703L
+# define if_constexpr if constexpr
+#else
+# define if_constexpr if
+#endif
+
 //==============================================================================
 
 static double resonanceToQ(double resonance)
@@ -122,49 +128,83 @@ void VAStateVariableFilter::calcFilter()
     KCoeff = shelfGain;
 }
 
-float VAStateVariableFilter::processAudioSample(float input)
+template <int FilterType>
+void VAStateVariableFilter::processInternally(const float *input, float *output, unsigned count)
 {
-    // Filter processing:
-    const float HP = (input - (2.0f * RCoeff + gCoeff) * z1_A - z2_A)
-        / (1.0f + (2.0f * RCoeff * gCoeff) + gCoeff * gCoeff);
+    const float gCoeff = this->gCoeff;
+    const float RCoeff = this->RCoeff;
+    const float KCoeff = this->KCoeff;
 
-    const float BP = HP * gCoeff + z1_A;
+    float z1_A = this->z1_A;
+    float z2_A = this->z2_A;
 
-    const float LP = BP * gCoeff + z2_A;
+    for (unsigned i = 0; i < count; ++i) {
+        float in = input[i];
 
-    const float UBP = 2.0f * RCoeff * BP;
+        float HP = (in - (2.0f * RCoeff + gCoeff) * z1_A - z2_A)
+            * (1.0f / (1.0f + (2.0f * RCoeff * gCoeff) + gCoeff * gCoeff));
+        float BP = HP * gCoeff + z1_A;
+        float LP = BP * gCoeff + z2_A;
 
-    const float BShelf = input + UBP * KCoeff;
+        z1_A = gCoeff * HP + BP;        // unit delay (state variable)
+        z2_A = gCoeff * BP + LP;        // unit delay (state variable)
 
-    const float Notch = input - UBP;
+        // Selects which filter type this function will output.
+        float out = 0.0f;
+        if_constexpr (FilterType == SVFLowpass)
+            out = LP;
+        else if_constexpr (FilterType == SVFBandpass)
+            out = BP;
+        else if_constexpr (FilterType == SVFHighpass)
+            out = HP;
+        else if_constexpr (FilterType == SVFUnitGainBandpass)
+            out = 2.0f * RCoeff * BP;
+        else if_constexpr (FilterType == SVFBandShelving)
+            out = in + 2.0f * RCoeff * KCoeff * BP;
+        else if_constexpr (FilterType == SVFNotch)
+            out = in - 2.0f * RCoeff * BP;
+        else if_constexpr (FilterType == SVFAllpass)
+            out = in - 4.0f * RCoeff * BP;
+        else if_constexpr (FilterType == SVFPeak)
+            out = LP - HP;
 
-    const float AP = input - (4.0f * RCoeff * BP);
+        output[i] = out;
+    }
 
-    const float Peak = LP - HP;
+    this->z1_A = z1_A;
+    this->z2_A = z2_A;
+}
 
-    z1_A = gCoeff * HP + BP;        // unit delay (state variable)
-    z2_A = gCoeff * BP + LP;        // unit delay (state variable)
-
-    // Selects which filter type this function will output.
+void VAStateVariableFilter::process(const float *input, float *output, unsigned count)
+{
     switch (filterType) {
     case SVFLowpass:
-        return LP;
+        processInternally<SVFLowpass>(input, output, count);
+        break;
     case SVFBandpass:
-        return BP;
+        processInternally<SVFBandpass>(input, output, count);
+        break;
     case SVFHighpass:
-        return HP;
+        processInternally<SVFHighpass>(input, output, count);
+        break;
     case SVFUnitGainBandpass:
-        return UBP;
+        processInternally<SVFUnitGainBandpass>(input, output, count);
+        break;
     case SVFBandShelving:
-        return BShelf;
+        processInternally<SVFBandShelving>(input, output, count);
+        break;
     case SVFNotch:
-        return Notch;
+        processInternally<SVFNotch>(input, output, count);
+        break;
     case SVFAllpass:
-        return AP;
+        processInternally<SVFAllpass>(input, output, count);
+        break;
     case SVFPeak:
-        return Peak;
+        processInternally<SVFPeak>(input, output, count);
+        break;
     default:
-        return 0.0f;
+        for (unsigned i = 0; i < count; ++i)
+            output[i] = input[i];
     }
 }
 

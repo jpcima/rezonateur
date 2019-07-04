@@ -107,9 +107,9 @@ public:
     void setSampleRate(float newSampleRate);
 
     //------------------------------------------------------------------------------
-    /**    Performs the actual processing for one sample of data.
+    /**    Performs the actual processing.
     */
-    float processAudioSample(float input);
+    void process(const float *input, float *output, unsigned count);
 
     //------------------------------------------------------------------------------
     /**    Compute the transfer function at given frequency.
@@ -131,6 +131,10 @@ private:
     //==============================================================================
     //    Calculate the coefficients for the filter based on parameters.
     void calcFilter();
+
+    //
+    template <int FilterType>
+    void processInternally(const float *input, float *output, unsigned count);
 
     //    Parameters:
     int filterType;

@@ -6,7 +6,7 @@ class Rezonateur {
 public:
     void init(double samplerate);
 
-    double process(double input);
+    void process(const float *input, float *output, unsigned count);
 
     std::complex<double> getLowpassResponse(double f) const;
     std::complex<double> getBandpassResponse(double f) const;
@@ -21,6 +21,9 @@ public:
     //     ///
     //     Section_Count,
     // };
+
+private:
+    void processWithinBufferLimit(const float *input, float *output, unsigned count);
 
 private:
     float fLowpassGain;

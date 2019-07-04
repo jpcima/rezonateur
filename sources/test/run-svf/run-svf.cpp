@@ -42,8 +42,7 @@ static int process(jack_nframes_t nframes, void *userdata)
         if (!ctx->enable_filter[f])
             continue;
         VAStateVariableFilter &filter = ctx->filter[f];
-        for (jack_nframes_t i = 0; i < nframes; ++i)
-            out[i] = filter.processAudioSample(out[i]);
+        filter.process(out, out, nframes);
     }
 
     return 0;

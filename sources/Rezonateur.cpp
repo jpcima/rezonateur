@@ -1,5 +1,7 @@
 #include "Rezonateur.h"
 
+static constexpr unsigned bufferLimit = 256;
+
 void Rezonateur::init(double samplerate)
 {
     fLowpassGain = 1.0;
@@ -77,23 +79,51 @@ void Rezonateur::init(double samplerate)
     }
 }
 
-double Rezonateur::process(double input)
+void Rezonateur::process(const float *input, float *output, unsigned count)
 {
-    double lowpass = input * fLowpassGain;
-    double bandpass = input * fBandpassGain;
-    double highpass = input * fHighpassGain;
-    double notch = input * fNotchGain;
+    while (count > 0) {
+        unsigned current = (count < bufferLimit) ? count : bufferLimit;
+        processWithinBufferLimit(input, output, count);
+        input += current;
+        output += current;
+        count -= current;
+    }
+}
 
+void Rezonateur::processWithinBufferLimit(const float *input, float *output, unsigned count)
+{
+    float lowpassGain = fLowpassGain;
+    float bandpassGain = fBandpassGain;
+    float highpassGain = fHighpassGain;
+    float notchGain = fNotchGain;
+
+    float lowpass[bufferLimit];
+    float bandpass[bufferLimit];
+    float highpass[bufferLimit];
+    float notch[bufferLimit];
+
+    for (unsigned i = 0; i < count; ++i)
+        lowpass[i] = input[i] * lowpassGain;
     for (unsigned i = 0; i < 5; ++i)
-        lowpass = fLowpass[i].processAudioSample(lowpass);
+        fLowpass[i].process(lowpass, lowpass, count);
+
+    for (unsigned i = 0; i < count; ++i)
+        bandpass[i] = input[i] * bandpassGain;
     for (unsigned i = 0; i < 3; ++i)
-        bandpass = fBandpass[i].processAudioSample(bandpass);
-    for (unsigned i = 0; i < 5; ++i)
-        highpass = fHighpass[i].processAudioSample(highpass);
-    for (unsigned i = 0; i < 5; ++i)
-        notch = fNotch[i].processAudioSample(notch);
+        fBandpass[i].process(bandpass, bandpass, count);
 
-    return lowpass + bandpass + highpass + notch;
+    for (unsigned i = 0; i < count; ++i)
+        highpass[i] = input[i] * highpassGain;
+    for (unsigned i = 0; i < 5; ++i)
+        fHighpass[i].process(highpass, highpass, count);
+
+    for (unsigned i = 0; i < count; ++i)
+        notch[i] = input[i] * notchGain;
+    for (unsigned i = 0; i < 5; ++i)
+        fNotch[i].process(notch, notch, count);
+
+    for (unsigned i = 0; i < count; ++i)
+        output[i] = lowpass[i] + bandpass[i] + highpass[i] + notch[i];
 }
 
 std::complex<double> Rezonateur::getLowpassResponse(double f) const
