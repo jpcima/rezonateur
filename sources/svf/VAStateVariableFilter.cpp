@@ -168,4 +168,78 @@ float VAStateVariableFilter::processAudioSample(float input)
     }
 }
 
+std::complex<double> VAStateVariableFilter::calcTransfer(double freq) const
+{
+    double w = 2 * M_PI * freq;
+    double wc = 2 * M_PI * cutoffFreq;
+
+    switch (filterType) {
+    case SVFLowpass:
+        return calcTransferLowpass(w, wc, RCoeff);
+    case SVFBandpass:
+        return calcTransferBandpass(w, wc, RCoeff);
+    case SVFHighpass:
+        return calcTransferHighpass(w, wc, RCoeff);
+    case SVFUnitGainBandpass:
+        return calcTransferUnitGainBandpass(w, wc, RCoeff);
+    case SVFBandShelving:
+        return calcTransferBandShelving(w, wc, RCoeff, shelfGain);
+    case SVFNotch:
+        return calcTransferNotch(w, wc, RCoeff);
+    case SVFAllpass:
+        return calcTransferAllpass(w, wc, RCoeff);
+    case SVFPeak:
+        return calcTransferPeak(w, wc, RCoeff);
+    default:
+        return 0.0;
+    }
+}
+
+//==============================================================================
+
+std::complex<double> VAStateVariableFilter::calcTransferLowpass(double w, double wc, double r)
+{
+    std::complex<double> s = w * std::complex<double>(0, 1);
+    return (wc * wc) / (s * s + 2.0 * r * wc * s + wc * wc);
+}
+
+std::complex<double> VAStateVariableFilter::calcTransferBandpass(double w, double wc, double r)
+{
+    std::complex<double> s = w * std::complex<double>(0, 1);
+    return (wc * s) / (s * s + 2.0 * r * wc * s + wc * wc);
+}
+
+std::complex<double> VAStateVariableFilter::calcTransferHighpass(double w, double wc, double r)
+{
+    std::complex<double> s = w * std::complex<double>(0, 1);
+    return (s * s) / (s * s + 2.0 * r * wc * s + wc * wc);
+}
+
+std::complex<double> VAStateVariableFilter::calcTransferUnitGainBandpass(double w, double wc, double r)
+{
+    return 2.0 * r * calcTransferBandpass(w, wc, r);
+}
+
+std::complex<double> VAStateVariableFilter::calcTransferBandShelving(double w, double wc, double r, double k)
+{
+    std::complex<double> s = w * std::complex<double>(0, 1);
+    return 1.0 + k * calcTransferUnitGainBandpass(w, wc, r);
+}
+
+std::complex<double> VAStateVariableFilter::calcTransferNotch(double w, double wc, double r)
+{
+    return calcTransferBandShelving(w, wc, r, -1.0);
+}
+
+std::complex<double> VAStateVariableFilter::calcTransferAllpass(double w, double wc, double r)
+{
+    return calcTransferBandShelving(w, wc, r, -2.0);
+}
+
+std::complex<double> VAStateVariableFilter::calcTransferPeak(double w, double wc, double r)
+{
+    std::complex<double> s = w * std::complex<double>(0, 1);
+    return (wc * wc - s * s) / (s * s + 2.0 * r * wc * s + wc * wc);
+}
+
 //==============================================================================

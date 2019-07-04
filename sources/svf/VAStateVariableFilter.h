@@ -31,6 +31,8 @@
 #ifndef VASTATEVARIABLEFILTER_H_INCLUDED
 #define VASTATEVARIABLEFILTER_H_INCLUDED
 
+#include <complex>
+
 //==============================================================================
 
 /** The type of filter that the State Variable Filter will output. */
@@ -110,6 +112,11 @@ public:
     float processAudioSample(float input);
 
     //------------------------------------------------------------------------------
+    /**    Compute the transfer function at given frequency.
+    */
+    std::complex<double> calcTransfer(double freq) const;
+
+    //------------------------------------------------------------------------------
 
 
     double getCutoffFreq(){ return cutoffFreq; }
@@ -139,6 +146,16 @@ private:
     float KCoeff;        // shelf gain element
 
     float z1_A, z2_A;        // state variables (z^-1)
+
+private:
+    static std::complex<double> calcTransferLowpass(double w, double wc, double r);
+    static std::complex<double> calcTransferBandpass(double w, double wc, double r);
+    static std::complex<double> calcTransferHighpass(double w, double wc, double r);
+    static std::complex<double> calcTransferUnitGainBandpass(double w, double wc, double r);
+    static std::complex<double> calcTransferBandShelving(double w, double wc, double r, double k);
+    static std::complex<double> calcTransferNotch(double w, double wc, double r);
+    static std::complex<double> calcTransferAllpass(double w, double wc, double r);
+    static std::complex<double> calcTransferPeak(double w, double wc, double r);
 };
 
 //==============================================================================
