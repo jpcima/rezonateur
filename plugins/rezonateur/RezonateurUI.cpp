@@ -62,8 +62,7 @@ RezonateurUI::RezonateurUI()
     int xOffBandKnobs = -2;
     int xOffWetDry = -12;
 
-    #warning XXX test
-    int sx = 50;
+    int sx = 40;
     int sy = 380;
     xPassMode = sx;
     createSliderForParameter(fSkinBlackKnob, pIdMode, sx, sy);
@@ -127,7 +126,7 @@ RezonateurUI::RezonateurUI()
 
     SkinIndicator *levelMonitor = new SkinIndicator(fSkinLevelMonitor, this);
     fLevelMonitor.reset(levelMonitor);
-    levelMonitor->setAbsolutePos(380, 330);
+    levelMonitor->setAbsolutePos(390, 330);
 }
 
 RezonateurUI::~RezonateurUI()
