@@ -22,6 +22,9 @@ protected:
 private:
     void recomputeResponseCache();
 
+    static double frequencyOfWidthRatio(double r);
+    static double widthRatioOfFrequency(double f);
+
 private:
     Rezonateur &fRez;
     ColorRGBA8 fColor[4] = {};

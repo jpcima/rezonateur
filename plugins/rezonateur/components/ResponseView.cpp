@@ -34,6 +34,13 @@ const double ResponseView::maxFrequency = 20000.0;
 const double ResponseView::minGain = -40.0;
 const double ResponseView::maxGain = +20.0;
 
+static const double frequencyStops[] = {
+    30.0, 100.0, 300.0, 1000.0, 3000.0, 10000.0
+};
+static const double magnitudeStops[] = {
+    -30.0, -20.0, -10.0, +10.0,
+};
+
 void ResponseView::onDisplay()
 {
     int w = getWidth();
@@ -54,6 +61,35 @@ void ResponseView::onDisplay()
     Rezonateur &rez = fRez;
     const std::vector<double> &response = fResponse;
 
+    ///
+    cairo_set_source_rgba(cr, 0.5, 0.5, 0.5, 1.0);
+    const double dashes[] = { 1.0, 4.0 };
+    cairo_set_dash(cr, dashes, sizeof(dashes) / sizeof(dashes[0]), 0);
+    for (double f : frequencyStops) {
+        double r = widthRatioOfFrequency(f);
+        double x = r * (w - 1);
+        cairo_move_to(cr, x, 0);
+        cairo_line_to(cr, x, h);
+        cairo_stroke(cr);
+    }
+    for (double m : magnitudeStops) {
+        double r = (m - minGain) * (1.0 / (maxGain - minGain));
+        double y = (1.0 - r) * (h - 1);
+        cairo_move_to(cr, 0, y);
+        cairo_line_to(cr, w, y);
+        cairo_stroke(cr);
+    }
+    cairo_set_dash(cr, nullptr, 0, 0);
+    {
+        double m = 0.0;
+        double r = (m - minGain) * (1.0 / (maxGain - minGain));
+        double y = (1.0 - r) * (h - 1);
+        cairo_move_to(cr, 0, y);
+        cairo_line_to(cr, w, y);
+        cairo_stroke(cr);
+    }
+
+    ///
     unsigned mode = rez.getFilterMode();
     cairo_set_source_rgba8(cr, fColor[mode]);
 
@@ -93,7 +129,17 @@ void ResponseView::recomputeResponseCache()
 
     for (unsigned i = 0; i < size; ++i) {
         double r = i * (1.0 / (size - 1));
-        double f = std::exp(std::log(minFrequency) * (1 - r) + std::log(maxFrequency) * r);
+        double f = frequencyOfWidthRatio(r);
         response[i] = rez.getResponseGain(f);
     }
+}
+
+double ResponseView::frequencyOfWidthRatio(double r)
+{
+    return minFrequency * std::pow(maxFrequency / minFrequency, r);
+}
+
+double ResponseView::widthRatioOfFrequency(double f)
+{
+    return std::log(f * (1.0 / minFrequency)) * (1.0 / std::log(maxFrequency / minFrequency));
 }
