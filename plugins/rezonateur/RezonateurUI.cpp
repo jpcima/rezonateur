@@ -24,6 +24,7 @@ RezonateurUI::RezonateurUI()
       fSkinPowerSwitch(Artwork::power_switchData, Artwork::power_switchDataSize, 2),
       fSkinLevelMonitor(Artwork::level_monitorData, Artwork::level_monitorDataSize, 31),
       fSkinTextPassMode(Artwork::text_pass_modeData, Artwork::text_pass_modeDataSize, 1),
+      fSkinTextSidePassMode(Artwork::text_side_pass_modeData, Artwork::text_side_pass_modeDataSize, 1),
       fSkinTextBandKnobs(Artwork::text_band_knobsData, Artwork::text_band_knobsDataSize, 1),
       fSkinTextBandLow(Artwork::text_band_lowData, Artwork::text_band_lowDataSize, 1),
       fSkinTextBandMid(Artwork::text_band_midData, Artwork::text_band_midDataSize, 1),
@@ -59,10 +60,11 @@ RezonateurUI::RezonateurUI()
     int xWetDry;
 
     int xOffPassMode = -12;
+    int xOffSidePassMode = -40;
     int xOffBandKnobs = -2;
     int xOffWetDry = -12;
 
-    int sx = 40;
+    int sx = 50;
     int sy = 380;
     xPassMode = sx;
     createSliderForParameter(fSkinBlackKnob, pIdMode, sx, sy);
@@ -98,6 +100,9 @@ RezonateurUI::RezonateurUI()
     label = new SkinIndicator(fSkinTextPassMode, this);
     fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
     label->setAbsolutePos(xPassMode + xOffPassMode, 360);
+    label = new SkinIndicator(fSkinTextSidePassMode, this);
+    fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
+    label->setAbsolutePos(xPassMode + xOffSidePassMode, 380 - 4);
     ///
     label = new SkinIndicator(fSkinTextBandKnobs, this);
     fMiscWidgets.push_back(std::unique_ptr<Widget>(label));

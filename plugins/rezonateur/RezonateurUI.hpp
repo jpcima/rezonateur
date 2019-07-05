@@ -41,6 +41,7 @@ private:
     KnobSkin fSkinLevelMonitor;
 
     KnobSkin fSkinTextPassMode;
+    KnobSkin fSkinTextSidePassMode;
     KnobSkin fSkinTextBandKnobs;
     KnobSkin fSkinTextBandLow;
     KnobSkin fSkinTextBandMid;

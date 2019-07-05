@@ -38,6 +38,9 @@ namespace Artwork
     extern const char* text_pass_modeData;
     const unsigned int text_pass_modeDataSize = 585;
 
+    extern const char* text_side_pass_modeData;
+    const unsigned int text_side_pass_modeDataSize = 793;
+
     extern const char* text_wet_dryData;
     const unsigned int text_wet_dryDataSize = 451;
 }
