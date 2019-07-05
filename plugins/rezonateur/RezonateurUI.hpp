@@ -19,6 +19,6 @@ protected:
     void parameterChanged(uint32_t index, float value) override;
 
 private:
-    std::unique_ptr<ResponseView> fResponseView[4];
+    std::unique_ptr<ResponseView> fResponseView;
     Rezonateur fRez;
 };

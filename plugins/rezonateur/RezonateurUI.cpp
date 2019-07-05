@@ -11,22 +11,20 @@ RezonateurUI::RezonateurUI()
     Rezonateur &rez = fRez;
     rez.init(samplerate);
 
-    for (unsigned b = 0; b < 4; ++b) {
-        ResponseView *rezView = new ResponseView(rez, this);
-        fResponseView[b].reset(rezView);
+    ResponseView *rezView = new ResponseView(rez, this);
+    fResponseView.reset(rezView);
 
+    rezView->setAbsolutePos(50, 20);
+    rezView->setSize(400, 300);
+
+    for (unsigned b = 0; b < 4; ++b) {
         static const uint8_t colors[4][4] = {
             {0xfc, 0xe9, 0x4f, 0xff},
             {0xfc, 0xaf, 0x3e, 0xff},
             {0x8a, 0xe2, 0x34, 0xff},
             {0x72, 0x9f, 0xcf, 0xff},
         };
-
-        rezView->setBand(b);
-        rezView->setColor(colors[b]);
-
-        rezView->setAbsolutePos(50, 20 + b * 120);
-        rezView->setSize(400, 100);
+        rezView->setColor(b, colors[b]);
     }
 }
 

@@ -12,21 +12,14 @@ ResponseView::ResponseView(Rezonateur &rez, Widget *group)
     fResponse.reserve(1024);
 }
 
-void ResponseView::setBand(unsigned band)
+void ResponseView::setColor(unsigned mode, const uint8_t color[4])
 {
-    if (fBand == band)
+    DISTRHO_SAFE_ASSERT_RETURN(mode < 4,);
+
+    if (memcmp(fColor[mode], color, 4) == 0)
         return;
 
-    fBand = band;
-    updateResponse();
-}
-
-void ResponseView::setColor(const uint8_t color[4])
-{
-    if (memcmp(fColor, color, 4) == 0)
-        return;
-
-    memcpy(fColor, color, 4);
+    memcpy(fColor[mode], color, 4);
     repaint();
 }
 
@@ -38,8 +31,8 @@ void ResponseView::updateResponse()
 
 const double ResponseView::minFrequency = 10.0;
 const double ResponseView::maxFrequency = 20000.0;
-const double ResponseView::minGain = -80.0;
-const double ResponseView::maxGain = +30.0;
+const double ResponseView::minGain = -60.0;
+const double ResponseView::maxGain = +20.0;
 
 void ResponseView::onDisplay()
 {
@@ -58,8 +51,11 @@ void ResponseView::onDisplay()
     cairo_set_source_rgba(cr, 0.1, 0.1, 0.1, 1.0);
     cairo_fill(cr);
 
-    const std::vector<std::complex<double>> &response = fResponse;
-    cairo_set_source_rgba8(cr, fColor[0], fColor[1], fColor[2], fColor[3]);
+    Rezonateur &rez = fRez;
+    const std::vector<double> &response = fResponse;
+
+    unsigned mode = rez.getFilterMode();
+    cairo_set_source_rgba8(cr, fColor[mode][0], fColor[mode][1], fColor[mode][2], fColor[mode][3]);
 
     bool havelasty = false;
     double lasty = 0;
@@ -88,26 +84,16 @@ void ResponseView::onDisplay()
 void ResponseView::recomputeResponseCache()
 {
     Rezonateur &rez = fRez;
-    unsigned band = fBand;
     unsigned size = getWidth();
 
     DISTRHO_SAFE_ASSERT_RETURN(size > 0,);
 
     fResponse.resize(size);
-    std::complex<double> *response = fResponse.data();
+    double *response = fResponse.data();
 
     for (unsigned i = 0; i < size; ++i) {
         double r = i * (1.0 / (size - 1));
         double f = std::exp(std::log(minFrequency) * (1 - r) + std::log(maxFrequency) * r);
-
-        std::complex<double> h;
-        switch (band) {
-        case 0: h = rez.getLowpassResponse(f); break;
-        case 1: h = rez.getBandpassResponse(f); break;
-        case 2: h = rez.getHighpassResponse(f); break;
-        case 3: h = rez.getNotchResponse(f); break;
-        default: h = 0.0; DISTRHO_SAFE_ASSERT(false);
-        }
-        response[i] = h;
+        response[i] = rez.getResponseGain(f);
     }
 }

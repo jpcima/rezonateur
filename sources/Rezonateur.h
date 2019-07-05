@@ -6,33 +6,33 @@ class Rezonateur {
 public:
     void init(double samplerate);
 
+    void setFilterMode(int mode);
+    void setFilterGain(unsigned nth, float gain);
+    void setFilterCutoff(unsigned nth, float cutoff);
+    void setFilterEmph(unsigned nth, float emph);
+    int getFilterMode() const;
+    float getFilterGain(unsigned nth) const;
+    float getFilterCutoff(unsigned nth) const;
+    float getFilterEmph(unsigned nth) const;
+
     void process(const float *input, float *output, unsigned count);
 
-    std::complex<double> getLowpassResponse(double f) const;
-    std::complex<double> getBandpassResponse(double f) const;
-    std::complex<double> getHighpassResponse(double f) const;
-    std::complex<double> getNotchResponse(double f) const;
+    double getResponseGain(double f) const;
 
-    // enum Section {
-    //     LowpassSection,
-    //     BandpassSection,
-    //     HighpassSection,
-    //     NotchSection,
-    //     ///
-    //     Section_Count,
-    // };
+    enum Mode {
+        LowpassMode,
+        BandpassMode,
+        HighpassMode,
+        BandpassNotchMode,
+    };
 
 private:
     void processWithinBufferLimit(const float *input, float *output, unsigned count);
+    void getEffectiveFilterGains(float gains[3]) const;
+    static int getFilterTypeForMode(int mode);
 
 private:
-    float fLowpassGain;
-    float fBandpassGain;
-    float fHighpassGain;
-    float fNotchGain;
-
-    VAStateVariableFilter fLowpass[5];
-    VAStateVariableFilter fBandpass[3];
-    VAStateVariableFilter fHighpass[5];
-    VAStateVariableFilter fNotch[5];
+    int fMode;
+    float fFilterGains[3];
+    VAStateVariableFilter fFilters[3];
 };

@@ -119,13 +119,13 @@ public:
     //------------------------------------------------------------------------------
 
 
-    double getCutoffFreq(){ return cutoffFreq; }
+    double getCutoffFreq() const { return cutoffFreq; }
 
-    double getFilterType(){ return filterType; }
+    double getFilterType() const { return filterType; }
 
-    double getQ(){ return Q; }
+    double getQ() const { return Q; }
 
-    double getShelfGain(){ return shelfGain; }
+    double getShelfGain() const { return shelfGain; }
 
 private:
     //==============================================================================
