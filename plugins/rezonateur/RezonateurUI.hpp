@@ -40,6 +40,7 @@ private:
     KnobSkin fSkinPowerSwitch;
     KnobSkin fSkinLevelMonitor;
 
+    KnobSkin fSkinTextPassMode;
     KnobSkin fSkinTextBandKnobs;
     KnobSkin fSkinTextBandLow;
     KnobSkin fSkinTextBandMid;

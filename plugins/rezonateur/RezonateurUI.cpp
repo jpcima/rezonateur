@@ -23,6 +23,7 @@ RezonateurUI::RezonateurUI()
       fSkinRedKnob(Artwork::polyknob_redData, Artwork::polyknob_redDataSize, 31),
       fSkinPowerSwitch(Artwork::power_switchData, Artwork::power_switchDataSize, 2),
       fSkinLevelMonitor(Artwork::level_monitorData, Artwork::level_monitorDataSize, 31),
+      fSkinTextPassMode(Artwork::text_pass_modeData, Artwork::text_pass_modeDataSize, 1),
       fSkinTextBandKnobs(Artwork::text_band_knobsData, Artwork::text_band_knobsDataSize, 1),
       fSkinTextBandLow(Artwork::text_band_lowData, Artwork::text_band_lowDataSize, 1),
       fSkinTextBandMid(Artwork::text_band_midData, Artwork::text_band_midDataSize, 1),
@@ -52,11 +53,16 @@ RezonateurUI::RezonateurUI()
     createToggleButtonForParameter(fSkinPowerSwitch, pIdBypass, 50, 330);
     fToggleButtonForParameter[pIdBypass]->setHasInvertedAppearance(true);
 
+    int xPassMode;
     int xBandKnobs[3];
+
+    int xOffPassMode = -12;
+    int xOffBandKnobs = -2;
 
     #warning XXX test
     int sx = 50;
     int sy = 380;
+    xPassMode = sx;
     createSliderForParameter(fSkinBlackKnob, pIdMode, sx, sy);
     sx += 50;
     xBandKnobs[0] = sx;
@@ -86,25 +92,29 @@ RezonateurUI::RezonateurUI()
 
     SkinIndicator *label;
     ///
+    label = new SkinIndicator(fSkinTextPassMode, this);
+    fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
+    label->setAbsolutePos(xPassMode + xOffPassMode, 360);
+    ///
     label = new SkinIndicator(fSkinTextBandKnobs, this);
     fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
-    label->setAbsolutePos(xBandKnobs[0], 360);
+    label->setAbsolutePos(xBandKnobs[0] + xOffBandKnobs, 360);
     label = new SkinIndicator(fSkinTextBandKnobs, this);
     fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
-    label->setAbsolutePos(xBandKnobs[1], 360);
+    label->setAbsolutePos(xBandKnobs[1] + xOffBandKnobs, 360);
     label = new SkinIndicator(fSkinTextBandKnobs, this);
     fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
-    label->setAbsolutePos(xBandKnobs[2], 360);
+    label->setAbsolutePos(xBandKnobs[2] + xOffBandKnobs, 360);
     ///
     label = new SkinIndicator(fSkinTextBandLow, this);
     fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
-    label->setAbsolutePos(xBandKnobs[0], 480);
+    label->setAbsolutePos(xBandKnobs[0] + xOffBandKnobs, 480);
     label = new SkinIndicator(fSkinTextBandMid, this);
     fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
-    label->setAbsolutePos(xBandKnobs[1], 480);
+    label->setAbsolutePos(xBandKnobs[1] + xOffBandKnobs, 480);
     label = new SkinIndicator(fSkinTextBandHigh, this);
     fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
-    label->setAbsolutePos(xBandKnobs[2], 480);
+    label->setAbsolutePos(xBandKnobs[2] + xOffBandKnobs, 480);
     ///
 
     SkinIndicator *levelMonitor = new SkinIndicator(fSkinLevelMonitor, this);

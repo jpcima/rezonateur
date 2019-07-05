@@ -34,6 +34,9 @@ namespace Artwork
 
     extern const char* text_band_midData;
     const unsigned int text_band_midDataSize = 364;
+
+    extern const char* text_pass_modeData;
+    const unsigned int text_pass_modeDataSize = 585;
 }
 
 #endif // BINARY_ARTWORK_HPP
