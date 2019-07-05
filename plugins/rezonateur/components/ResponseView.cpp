@@ -12,14 +12,14 @@ ResponseView::ResponseView(Rezonateur &rez, Widget *group)
     fResponse.reserve(1024);
 }
 
-void ResponseView::setColor(unsigned mode, const uint8_t color[4])
+void ResponseView::setColor(unsigned mode, ColorRGBA8 color)
 {
     DISTRHO_SAFE_ASSERT_RETURN(mode < 4,);
 
-    if (memcmp(fColor[mode], color, 4) == 0)
+    if (fColor[mode] == color)
         return;
 
-    memcpy(fColor[mode], color, 4);
+    fColor[mode] = color;
     repaint();
 }
 
@@ -31,7 +31,7 @@ void ResponseView::updateResponse()
 
 const double ResponseView::minFrequency = 10.0;
 const double ResponseView::maxFrequency = 20000.0;
-const double ResponseView::minGain = -60.0;
+const double ResponseView::minGain = -40.0;
 const double ResponseView::maxGain = +20.0;
 
 void ResponseView::onDisplay()
@@ -55,7 +55,7 @@ void ResponseView::onDisplay()
     const std::vector<double> &response = fResponse;
 
     unsigned mode = rez.getFilterMode();
-    cairo_set_source_rgba8(cr, fColor[mode][0], fColor[mode][1], fColor[mode][2], fColor[mode][3]);
+    cairo_set_source_rgba8(cr, fColor[mode]);
 
     bool havelasty = false;
     double lasty = 0;

@@ -26,9 +26,14 @@ FILES_DSP = \
 FILES_UI  = \
 	RezonateurUI.cpp \
 	RezonateurShared.cpp \
+	Artwork.cpp \
 	components/ResponseView.cpp \
+	components/KnobSkin.cpp \
+	components/SkinSlider.cpp \
+	components/SkinToggleButton.cpp \
 	sources/Rezonateur.cpp \
-	sources/svf/VAStateVariableFilter.cpp
+	sources/svf/VAStateVariableFilter.cpp \
+	sources/utility/cairo++.cpp
 
 # --------------------------------------------------------------
 # Do some magic
@@ -49,5 +54,8 @@ TARGETS += lv2_sep
 TARGETS += vst
 
 all: $(TARGETS)
+
+Artwork.cpp:
+	../../dpf/utils/res2c.py Artwork artwork
 
 # --------------------------------------------------------------

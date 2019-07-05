@@ -1,5 +1,6 @@
 #pragma once
 #include "Widget.hpp"
+#include "utility/color.h"
 #include <vector>
 #include <cstdint>
 class Rezonateur;
@@ -7,7 +8,7 @@ class Rezonateur;
 class ResponseView : public Widget {
 public:
     explicit ResponseView(Rezonateur &rez, Widget *group);
-    void setColor(unsigned mode, const uint8_t color[3]);
+    void setColor(unsigned mode, ColorRGBA8 color);
     void updateResponse();
 
     static const double minFrequency;
@@ -23,7 +24,7 @@ private:
 
 private:
     Rezonateur &fRez;
-    uint8_t fColor[4][4] = {};
+    ColorRGBA8 fColor[4] = {};
     bool fCacheValid = false;
     std::vector<double> fResponse;
 };

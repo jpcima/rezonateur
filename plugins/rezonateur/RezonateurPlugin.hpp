@@ -25,5 +25,7 @@ public:
 
 private:
     bool fBypassed;
+    float fDryGain;
+    float fWetGain;
     Rezonateur fRez;
 };

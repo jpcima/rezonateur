@@ -1,9 +1,13 @@
+#pragma once
+#include "utility/color.h"
 #include <cairo/cairo.h>
-#include <cstdint>
+#include <type_traits>
+#include <memory>
+#include <cstring>
 
-inline void cairo_set_source_rgba8(cairo_t *cr, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-{
-    double k = 1.0 / 0xff;
-    cairo_set_source_rgba(cr, r * k, g * k, b * k, a * k);
-}
+cairo_surface_t *cairo_image_surface_create_from_png_data(const char *data, unsigned length);
 
+void cairo_set_source_rgba8(cairo_t *cr, ColorRGBA8 c);
+
+struct cairo_surface_deleter { void operator()(cairo_surface_t *x) const noexcept { cairo_surface_destroy(x); } };
+typedef std::unique_ptr<std::remove_pointer<cairo_surface_t>::type, cairo_surface_deleter> cairo_surface_u;
