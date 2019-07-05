@@ -6,6 +6,8 @@ static constexpr unsigned bufferLimit = 256;
 void Rezonateur::init(double samplerate)
 {
     int mode = LowpassMode;
+    int ftype = getFilterTypeForMode(mode);
+
     fMode = mode;
 
     for (unsigned i = 0; i < 3; ++i)
@@ -17,7 +19,7 @@ void Rezonateur::init(double samplerate)
     for (unsigned i = 0; i < 3; ++i) {
         VAStateVariableFilter &filter = fFilters[i];
         filter.setSampleRate(samplerate);
-        filter.setFilterType(getFilterTypeForMode(fMode));
+        filter.setFilterType(ftype);
         filter.setCutoffFreq(cutoffs[i]);
         filter.setQ(q);
     }
@@ -25,7 +27,12 @@ void Rezonateur::init(double samplerate)
 
 void Rezonateur::setFilterMode(int mode)
 {
+    int ftype = getFilterTypeForMode(mode);
+
     fMode = mode;
+
+    for (unsigned i = 0; i < 3; ++i)
+        fFilters[i].setFilterType(ftype);
 }
 
 void Rezonateur::setFilterGain(unsigned nth, float gain)
