@@ -128,6 +128,20 @@ void VAStateVariableFilter::calcFilter()
     KCoeff = shelfGain;
 }
 
+static float analogSaturate(float x)
+{
+    #pragma message("TODO: simple filter analog saturation, oversampled processing")
+
+    if (x > +1)
+        x = 2. / 3.;
+    else if (x < -1)
+        x = -2. / 3.;
+    else
+        x = x - (x * x * x) * (1.0f / 3.0f);
+
+    return x;
+}
+
 template <int FilterType>
 void VAStateVariableFilter::processInternally(const float *input, float *output, unsigned count)
 {
@@ -141,7 +155,7 @@ void VAStateVariableFilter::processInternally(const float *input, float *output,
     for (unsigned i = 0; i < count; ++i) {
         float in = input[i];
 
-        float HP = (in - (2.0f * RCoeff + gCoeff) * z1_A - z2_A)
+        float HP = (in - analogSaturate((2.0f * RCoeff + gCoeff) * z1_A) - z2_A)
             * (1.0f / (1.0f + (2.0f * RCoeff * gCoeff) + gCoeff * gCoeff));
         float BP = HP * gCoeff + z1_A;
         float LP = BP * gCoeff + z2_A;
