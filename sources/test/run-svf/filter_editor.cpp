@@ -3,8 +3,8 @@
 #include "VAStateVariableFilter.h"
 #include <cmath>
 
-FilterEditor::FilterEditor(VAStateVariableFilter &filter, bool &enable_filter, std::mutex &mutex, QWidget *parent)
-    : QWidget(parent), filter_(filter), enable_filter_(enable_filter), mutex_(mutex), ui_(new Ui::FilterEditor)
+FilterEditor::FilterEditor(VAStateVariableFilter &filter, bool &enable_filter, bool &invert_filter, std::mutex &mutex, QWidget *parent)
+    : QWidget(parent), filter_(filter), enable_filter_(enable_filter), invert_filter_(invert_filter), mutex_(mutex), ui_(new Ui::FilterEditor)
 {
     Ui::FilterEditor &ui = *ui_;
     ui.setupUi(this);
@@ -26,6 +26,7 @@ FilterEditor::FilterEditor(VAStateVariableFilter &filter, bool &enable_filter, s
     ui.valQ->setValue(filter.getQ());
     ui.valShelfGain->setValue(20 * std::log10(filter.getShelfGain()));
     ui.chkEnable->setChecked(enable_filter);
+    ui.chkInvert->setChecked(invert_filter);
     updateValueLabels();
 
     connect(ui.valCutoff, &QDial::valueChanged,
@@ -56,6 +57,11 @@ FilterEditor::FilterEditor(VAStateVariableFilter &filter, bool &enable_filter, s
             this, [this](bool checked) {
                       std::unique_lock<std::mutex> lock(mutex_);
                       enable_filter_ = checked;
+                  });
+    connect(ui.chkInvert, &QCheckBox::toggled,
+            this, [this](bool checked) {
+                      std::unique_lock<std::mutex> lock(mutex_);
+                      invert_filter_ = checked;
                   });
 }
 

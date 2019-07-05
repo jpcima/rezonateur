@@ -24,6 +24,7 @@ struct AudioContext {
     ProcessMode mode = {};
     VAStateVariableFilter filter[FilterCount];
     bool enable_filter[FilterCount] = {};
+    bool invert_filter[FilterCount] = {};
     jack_client_t *client = nullptr;
     jack_port_t *p_in = nullptr;
     jack_port_t *p_out = nullptr;
@@ -60,7 +61,14 @@ static int process(jack_nframes_t nframes, void *userdata)
                     continue;
                 VAStateVariableFilter &filter = ctx->filter[f];
                 float temp[max_nframes];
+
                 filter.process(in, temp, nframes);
+
+                if (ctx->invert_filter[f]) {
+                    for (jack_nframes_t i = 0; i < nframes; ++i)
+                        temp[i] = -temp[i];
+                }
+
                 for (jack_nframes_t i = 0; i < nframes; ++i)
                     out[i] += temp[i];
             }
@@ -129,7 +137,7 @@ public:
             QVBoxLayout *lgrp = new QVBoxLayout;
             grp->setLayout(lgrp);
 
-            lgrp->addWidget(new FilterEditor(ctx->filter[f], ctx->enable_filter[f], ctx->mutex));
+            lgrp->addWidget(new FilterEditor(ctx->filter[f], ctx->enable_filter[f], ctx->invert_filter[f], ctx->mutex));
         }
     }
 
