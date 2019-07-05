@@ -5,15 +5,23 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QGroupBox>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include <mutex>
 #include <cmath>
+#include <cassert>
 
 static constexpr unsigned FilterCount = 6;
 
+enum ProcessMode {
+    Process_Sum,
+    Process_Product,
+};
+
 struct AudioContext {
     std::mutex mutex;
+    ProcessMode mode = {};
     VAStateVariableFilter filter[FilterCount];
     bool enable_filter[FilterCount] = {};
     jack_client_t *client = nullptr;
@@ -35,14 +43,45 @@ static int process(jack_nframes_t nframes, void *userdata)
         return 0;
     }
 
-    for (jack_nframes_t i = 0; i < nframes; ++i)
-        out[i] = in[i];
+    switch (ctx->mode) {
+    default:
+        assert(false);
+        /* fall through */
+    case Process_Sum: {
+        constexpr jack_nframes_t max_nframes = 256;
+        while (nframes > 0) {
+            jack_nframes_t current = (nframes < max_nframes) ? nframes : max_nframes;
 
-    for (unsigned f = 0; f < FilterCount; ++f) {
-        if (!ctx->enable_filter[f])
-            continue;
-        VAStateVariableFilter &filter = ctx->filter[f];
-        filter.process(out, out, nframes);
+            for (jack_nframes_t i = 0; i < nframes; ++i)
+                out[i] = 0;
+
+            for (unsigned f = 0; f < FilterCount; ++f) {
+                if (!ctx->enable_filter[f])
+                    continue;
+                VAStateVariableFilter &filter = ctx->filter[f];
+                float temp[max_nframes];
+                filter.process(in, temp, nframes);
+                for (jack_nframes_t i = 0; i < nframes; ++i)
+                    out[i] += temp[i];
+            }
+
+            nframes -= current;
+            in += current;
+            out += current;
+        }
+        break;
+    }
+    case Process_Product:
+        for (jack_nframes_t i = 0; i < nframes; ++i)
+            out[i] = in[i];
+
+        for (unsigned f = 0; f < FilterCount; ++f) {
+            if (!ctx->enable_filter[f])
+                continue;
+            VAStateVariableFilter &filter = ctx->filter[f];
+            filter.process(out, out, nframes);
+        }
+        break;
     }
 
     return 0;
@@ -57,13 +96,34 @@ public:
         QWidget *widget = new QWidget;
         setCentralWidget(widget);
 
-        QGridLayout *top = new QGridLayout;
+        QVBoxLayout *top = new QVBoxLayout;
         widget->setLayout(top);
-        top->setContentsMargins(0, 0, 0, 0);
+
+        {
+            QGroupBox *grp = new QGroupBox;
+            top->addWidget(grp);
+            grp->setTitle("Mode");
+            QVBoxLayout *lgrp = new QVBoxLayout;
+            grp->setLayout(lgrp);
+            QComboBox *cb = new QComboBox;
+            lgrp->addWidget(cb);
+            cb->addItem("Additive", Process_Sum);
+            cb->addItem("Multiplicative", Process_Product);
+
+            connect(cb, QOverload<int>::of(&QComboBox::currentIndexChanged),
+                    this, [this, cb](int index) {
+                              std::unique_lock<std::mutex> lock(ctx_->mutex);
+                              ctx_->mode = (ProcessMode)cb->itemData(index).toInt();
+                          });
+        }
+
+        QGridLayout *grid = new QGridLayout;
+        top->addLayout(grid);
+        grid->setContentsMargins(0, 0, 0, 0);
 
         for (unsigned f = 0; f < FilterCount; ++f) {
             QGroupBox *grp = new QGroupBox;
-            top->addWidget(grp, f % 3, f / 3);
+            grid->addWidget(grp, f % 3, f / 3);
             grp->setTitle(QString("Filter %0").arg(f + 1));
 
             QVBoxLayout *lgrp = new QVBoxLayout;
