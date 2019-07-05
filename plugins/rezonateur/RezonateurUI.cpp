@@ -1,4 +1,5 @@
 #include "RezonateurUI.hpp"
+#include "RezonateurPlugin.hpp"
 #include "Artwork.hpp"
 #include "Window.hpp"
 #include "Cairo.hpp"
@@ -117,6 +118,13 @@ void RezonateurUI::parameterChanged(uint32_t index, float value)
     }
 
     updateParameterValue(index, value);
+}
+
+void RezonateurUI::uiIdle()
+{
+    RezonateurPlugin *dsp = (RezonateurPlugin *)getPluginInstancePointer();
+    float level = dsp->getCurrentOutputLevel();
+    fLevelMonitor->setValue(level);
 }
 
 void RezonateurUI::updateParameterValue(uint32_t index, float value)

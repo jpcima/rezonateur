@@ -21,6 +21,7 @@ public:
 protected:
     void onDisplay() override;
     void parameterChanged(uint32_t index, float value) override;
+    void uiIdle() override;
 
 private:
     void updateParameterValue(uint32_t index, float value);

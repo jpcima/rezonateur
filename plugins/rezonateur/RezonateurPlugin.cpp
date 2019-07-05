@@ -3,9 +3,14 @@
 #include <cstring>
 
 RezonateurPlugin::RezonateurPlugin()
-    : Plugin(Parameter_Count, DISTRHO_PLUGIN_NUM_PROGRAMS, State_Count)
+    : Plugin(Parameter_Count, DISTRHO_PLUGIN_NUM_PROGRAMS, State_Count),
+      fCurrentOutputLevel(0.0)
 {
-    fRez.init(getSampleRate());
+    double samplerate = getSampleRate();
+
+    fOutputLevelFollower.release(0.5 * samplerate);
+
+    fRez.init(samplerate);
 
     for (unsigned p = 0; p < Parameter_Count; ++p) {
         Parameter param;
@@ -150,6 +155,8 @@ void RezonateurPlugin::run(const float **inputs, float **outputs, uint32_t frame
 
     if (fBypassed) {
         memcpy(output, input, frames * sizeof(float));
+        fOutputLevelFollower.clear();
+        fCurrentOutputLevel = 0;
         return;
     }
 
@@ -161,8 +168,16 @@ void RezonateurPlugin::run(const float **inputs, float **outputs, uint32_t frame
     float dry = fDryGain;
     float wet = fWetGain;
 
-    for (unsigned i = 0; i < frames; ++i)
-        output[i] = dry * input[i] + wet * output[i];
+    AmpFollower &levelFollower = fOutputLevelFollower;
+    float level = fCurrentOutputLevel;
+
+    for (unsigned i = 0; i < frames; ++i) {
+        float out = dry * input[i] + wet * output[i];
+        level = levelFollower.process(out);
+        output[i] = out;
+    }
+
+    fCurrentOutputLevel = level;
 }
 
 ///

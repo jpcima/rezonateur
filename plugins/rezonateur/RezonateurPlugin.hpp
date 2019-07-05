@@ -2,6 +2,7 @@
 #include "DistrhoPlugin.hpp"
 #include "RezonateurShared.hpp"
 #include "Rezonateur.h"
+#include "dsp/AmpFollower.hpp"
 #include <cstdint>
 
 class RezonateurPlugin : public Plugin {
@@ -23,9 +24,13 @@ public:
 
     void run(const float **inputs, float **outputs, uint32_t frames) override;
 
+    float getCurrentOutputLevel() const { return fCurrentOutputLevel; }
+
 private:
     bool fBypassed;
     float fDryGain;
     float fWetGain;
+    float fCurrentOutputLevel;
+    AmpFollower fOutputLevelFollower;
     Rezonateur fRez;
 };

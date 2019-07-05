@@ -23,6 +23,9 @@
 #define DISTRHO_PLUGIN_WANT_FULL_STATE 0
 #define DISTRHO_PLUGIN_NUM_PROGRAMS    0
 
+// for level monitoring
+#define DISTRHO_PLUGIN_WANT_DIRECT_ACCESS 1
+
 enum {
     pIdBypass,
 

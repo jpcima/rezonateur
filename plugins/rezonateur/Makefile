@@ -51,7 +51,7 @@ ifeq ($(HAVE_JACK),true)
 TARGETS += jack
 endif
 
-TARGETS += lv2_sep
+TARGETS += lv2
 TARGETS += vst
 
 all: $(TARGETS)
