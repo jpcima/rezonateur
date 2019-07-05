@@ -42,7 +42,7 @@ void InitParameter(uint32_t index, Parameter &parameter)
         parameter.symbol = "emph1";
         parameter.name = "Low emphasis";
         parameter.hints = kParameterIsAutomable;
-        parameter.ranges = ParameterRanges(5.0, 1.0, 10.0);
+        parameter.ranges = ParameterRanges(5.0, 0.1, 10.0);
         break;
 
     case pIdGain2:
@@ -62,7 +62,7 @@ void InitParameter(uint32_t index, Parameter &parameter)
         parameter.symbol = "emph2";
         parameter.name = "Mid emphasis";
         parameter.hints = kParameterIsAutomable;
-        parameter.ranges = ParameterRanges(5.0, 1.0, 10.0);
+        parameter.ranges = ParameterRanges(5.0, 0.1, 10.0);
         break;
 
     case pIdGain3:
@@ -82,7 +82,7 @@ void InitParameter(uint32_t index, Parameter &parameter)
         parameter.symbol = "emph3";
         parameter.name = "High emphasis";
         parameter.hints = kParameterIsAutomable;
-        parameter.ranges = ParameterRanges(5.0, 1.0, 10.0);
+        parameter.ranges = ParameterRanges(5.0, 0.1, 10.0);
         break;
     case pIdDryGain:
         parameter.symbol = "dry";
