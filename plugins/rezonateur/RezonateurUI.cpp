@@ -8,6 +8,11 @@
 #include "utility/color.h"
 #include <cmath>
 
+#ifndef DISTRHO_UI_PATCH_INVERTED_BYPASS
+    #pragma message("Please patch DPF with `resources/patch/DPF-bypass.patch`")
+    #pragma message("The patch works around the value inversion issue (DISTRHO/DPF#150).")
+#endif
+
 RezonateurUI::RezonateurUI()
     : UI(ui_width, ui_height),
       fSkinBlackKnob(Artwork::polyknob_blackData, Artwork::polyknob_blackDataSize, 31),
@@ -63,9 +68,9 @@ RezonateurUI::RezonateurUI()
     sx += 25;
     createSliderForParameter(fSkinRedKnob, pIdGain3, sx, sy);
     sx += 50;
-    createSliderForParameter(fSkinGreenKnob, pIdWetGain, sx, sy);
+    createSliderForParameter(fSkinGreenKnob, pIdDryGain, sx, sy);
     sx += 25;
-    createSliderForParameter(fSkinRedKnob, pIdDryGain, sx, sy);
+    createSliderForParameter(fSkinRedKnob, pIdWetGain, sx, sy);
 }
 
 RezonateurUI::~RezonateurUI()
@@ -85,6 +90,11 @@ void RezonateurUI::onDisplay()
 void RezonateurUI::parameterChanged(uint32_t index, float value)
 {
     DISTRHO_SAFE_ASSERT_RETURN(index < Parameter_Count,);
+
+#ifdef DISTRHO_UI_PATCH_INVERTED_BYPASS
+    if (index == pIdBypass && hasInvertedBypass())
+        value = 1.0f - value;
+#endif
 
     SkinSlider *sl = fSliderForParameter[index].get();
     if (sl) {
@@ -201,6 +211,10 @@ void RezonateurUI::createToggleButtonForParameter(const KnobSkin &skin, int pid,
 
     cb->ValueChangedCallback =
         [this, pid](bool value) {
+#ifdef DISTRHO_UI_PATCH_INVERTED_BYPASS
+            if (pid == pIdBypass && hasInvertedBypass())
+                value = 1.0f - value;
+#endif
             updateParameterValue(pid, value);
             setParameterValue(pid, value);
         };
