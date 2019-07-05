@@ -27,7 +27,8 @@ RezonateurUI::RezonateurUI()
       fSkinTextBandKnobs(Artwork::text_band_knobsData, Artwork::text_band_knobsDataSize, 1),
       fSkinTextBandLow(Artwork::text_band_lowData, Artwork::text_band_lowDataSize, 1),
       fSkinTextBandMid(Artwork::text_band_midData, Artwork::text_band_midDataSize, 1),
-      fSkinTextBandHigh(Artwork::text_band_highData, Artwork::text_band_highDataSize, 1)
+      fSkinTextBandHigh(Artwork::text_band_highData, Artwork::text_band_highDataSize, 1),
+      fSkinTextWetDry(Artwork::text_wet_dryData, Artwork::text_wet_dryDataSize, 1)
 {
     double samplerate = getSampleRate();
 
@@ -55,9 +56,11 @@ RezonateurUI::RezonateurUI()
 
     int xPassMode;
     int xBandKnobs[3];
+    int xWetDry;
 
     int xOffPassMode = -12;
     int xOffBandKnobs = -2;
+    int xOffWetDry = -12;
 
     #warning XXX test
     int sx = 50;
@@ -86,9 +89,10 @@ RezonateurUI::RezonateurUI()
     sx += 30;
     createSliderForParameter(fSkinRedKnob, pIdGain3, sx, sy);
     sx += 50;
-    createSliderForParameter(fSkinGreenKnob, pIdDryGain, sx, sy);
+    xWetDry = sx;
+    createSliderForParameter(fSkinGreenKnob, pIdWetGain, sx, sy);
     sx += 30;
-    createSliderForParameter(fSkinRedKnob, pIdWetGain, sx, sy);
+    createSliderForParameter(fSkinRedKnob, pIdDryGain, sx, sy);
 
     SkinIndicator *label;
     ///
@@ -115,6 +119,10 @@ RezonateurUI::RezonateurUI()
     label = new SkinIndicator(fSkinTextBandHigh, this);
     fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
     label->setAbsolutePos(xBandKnobs[2] + xOffBandKnobs, 480);
+    ///
+    label = new SkinIndicator(fSkinTextWetDry, this);
+    fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
+    label->setAbsolutePos(xWetDry + xOffWetDry, 360);
     ///
 
     SkinIndicator *levelMonitor = new SkinIndicator(fSkinLevelMonitor, this);
