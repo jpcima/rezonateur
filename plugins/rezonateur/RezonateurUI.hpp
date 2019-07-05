@@ -29,6 +29,9 @@ private:
     void createSliderForParameter(const KnobSkin &skin, int pid, int x, int y);
     void createToggleButtonForParameter(const KnobSkin &skin, int pid, int x, int y);
 
+    double convertNormalizedToParameter(unsigned index, double value);
+    double convertNormalizedFromParameter(unsigned index, double value);
+
 private:
     std::unique_ptr<ResponseView> fResponseView;
     Rezonateur fRez;
@@ -52,4 +55,6 @@ private:
     std::list<std::unique_ptr<Widget>> fMiscWidgets;
     std::unique_ptr<SkinSlider> fSliderForParameter[Parameter_Count];
     std::unique_ptr<SkinToggleButton> fToggleButtonForParameter[Parameter_Count];
+
+    Parameter fParameters[Parameter_Count];
 };

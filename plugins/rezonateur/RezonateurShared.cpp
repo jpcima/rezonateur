@@ -29,7 +29,7 @@ void InitParameter(uint32_t index, Parameter &parameter)
         parameter.symbol = "gain1";
         parameter.name = "Low gain";
         parameter.hints = kParameterIsAutomable|kParameterIsLogarithmic;
-        parameter.ranges = ParameterRanges(1.0 / std::sqrt(3.0 * M_SQRT1_2), 0.01, 3.0);
+        parameter.ranges = ParameterRanges(0.5, 0.01, 3.0);
         break;
     case pIdCutoff1:
         parameter.symbol = "cutoff1";
@@ -49,7 +49,7 @@ void InitParameter(uint32_t index, Parameter &parameter)
         parameter.symbol = "gain2";
         parameter.name = "Mid gain";
         parameter.hints = kParameterIsAutomable|kParameterIsLogarithmic;
-        parameter.ranges = ParameterRanges(1.0 / std::sqrt(3.0 * M_SQRT1_2), 0.01, 3.0);
+        parameter.ranges = ParameterRanges(0.5, 0.01, 3.0);
         break;
     case pIdCutoff2:
         parameter.symbol = "cutoff2";
@@ -69,7 +69,7 @@ void InitParameter(uint32_t index, Parameter &parameter)
         parameter.symbol = "gain3";
         parameter.name = "High gain";
         parameter.hints = kParameterIsAutomable|kParameterIsLogarithmic;
-        parameter.ranges = ParameterRanges(1.0 / std::sqrt(3.0 * M_SQRT1_2), 0.01, 3.0);
+        parameter.ranges = ParameterRanges(0.5, 0.01, 3.0);
         break;
     case pIdCutoff3:
         parameter.symbol = "cutoff3";
@@ -88,13 +88,13 @@ void InitParameter(uint32_t index, Parameter &parameter)
         parameter.symbol = "dry";
         parameter.name = "Dry gain";
         parameter.hints = kParameterIsAutomable|kParameterIsLogarithmic;
-        parameter.ranges = ParameterRanges(M_SQRT1_2, 0.01, 1.0);
+        parameter.ranges = ParameterRanges(0.5, 0.01, 3.0);
         break;
     case pIdWetGain:
-        parameter.symbol = "dry";
-        parameter.name = "Dry gain";
+        parameter.symbol = "wet";
+        parameter.name = "Wet gain";
         parameter.hints = kParameterIsAutomable|kParameterIsLogarithmic;
-        parameter.ranges = ParameterRanges(M_SQRT1_2, 0.01, 1.0);
+        parameter.ranges = ParameterRanges(0.5, 0.01, 3.0);
         break;
 
     default:

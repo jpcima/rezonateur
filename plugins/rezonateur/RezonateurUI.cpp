@@ -31,6 +31,9 @@ RezonateurUI::RezonateurUI()
       fSkinTextBandHigh(Artwork::text_band_highData, Artwork::text_band_highDataSize, 1),
       fSkinTextWetDry(Artwork::text_wet_dryData, Artwork::text_wet_dryDataSize, 1)
 {
+    for (unsigned p = 0; p < Parameter_Count; ++p)
+        InitParameter(p, fParameters[p]);
+
     double samplerate = getSampleRate();
 
     Rezonateur &rez = fRez;
@@ -160,7 +163,7 @@ void RezonateurUI::parameterChanged(uint32_t index, float value)
     SkinSlider *sl = fSliderForParameter[index].get();
     if (sl) {
         sl->setValueNotified(false);
-        sl->setValue(value);
+        sl->setValue(convertNormalizedFromParameter(index, value));
         sl->setValueNotified(true);
     }
 
@@ -241,17 +244,13 @@ void RezonateurUI::createSliderForParameter(const KnobSkin &skin, int pid, int x
     sl->setAbsolutePos(x, y);
     sl->setOrientation(SkinSlider::Vertical);
 
-    Parameter param;
-    InitParameter(pid, param);
-    sl->setValueBounds(param.ranges.min, param.ranges.max);
-    sl->setValue(param.ranges.def);
-
-    int hints = param.hints;
+    const Parameter &param = fParameters[pid];
+    sl->setValueBounds(0.0, 1.0);
+    sl->setValue(convertNormalizedFromParameter(pid, param.ranges.def));
 
     sl->ValueChangedCallback =
-        [this, pid, hints](double value) {
-            if (hints & kParameterIsInteger)
-                value = std::lround(value);
+        [this, pid](double value) {
+            value = convertNormalizedToParameter(pid, value);
             updateParameterValue(pid, value);
             setParameterValue(pid, value);
         };
@@ -265,8 +264,7 @@ void RezonateurUI::createToggleButtonForParameter(const KnobSkin &skin, int pid,
     fToggleButtonForParameter[pid].reset(cb);
     cb->setAbsolutePos(x, y);
 
-    Parameter param;
-    InitParameter(pid, param);
+    const Parameter &param = fParameters[pid];
     cb->setValue(param.ranges.def > 0.5f);
 
     cb->ValueChangedCallback =
@@ -278,6 +276,41 @@ void RezonateurUI::createToggleButtonForParameter(const KnobSkin &skin, int pid,
             updateParameterValue(pid, value);
             setParameterValue(pid, value);
         };
+}
+
+double RezonateurUI::convertNormalizedToParameter(unsigned index, double value)
+{
+    DISTRHO_SAFE_ASSERT_RETURN(index < Parameter_Count, 0.0)
+
+    const Parameter &param = fParameters[index];
+    double min = param.ranges.min;
+    double max = param.ranges.max;
+
+    if (param.hints & kParameterIsLogarithmic)
+        value = min * std::pow(max / min, value);
+    else
+        value = min + value * (max - min);
+
+    if (param.hints & kParameterIsInteger)
+        value = std::lround(value);
+
+    return value;
+}
+
+double RezonateurUI::convertNormalizedFromParameter(unsigned index, double value)
+{
+    DISTRHO_SAFE_ASSERT_RETURN(index < Parameter_Count, 0.0)
+
+    const Parameter &param = fParameters[index];
+    double min = param.ranges.min;
+    double max = param.ranges.max;
+
+    if (param.hints & kParameterIsLogarithmic)
+        value = std::log(value / min) / std::log(max / min);
+    else
+        value = (value - min) / (max - min);
+
+    return value;
 }
 
 ///
