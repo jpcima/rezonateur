@@ -22,7 +22,11 @@ RezonateurUI::RezonateurUI()
       fSkinYellowKnob(Artwork::polyknob_yellowData, Artwork::polyknob_yellowDataSize, 31),
       fSkinRedKnob(Artwork::polyknob_redData, Artwork::polyknob_redDataSize, 31),
       fSkinPowerSwitch(Artwork::power_switchData, Artwork::power_switchDataSize, 2),
-      fSkinLevelMonitor(Artwork::level_monitorData, Artwork::level_monitorDataSize, 31)
+      fSkinLevelMonitor(Artwork::level_monitorData, Artwork::level_monitorDataSize, 31),
+      fSkinTextBandKnobs(Artwork::text_band_knobsData, Artwork::text_band_knobsDataSize, 1),
+      fSkinTextBandLow(Artwork::text_band_lowData, Artwork::text_band_lowDataSize, 1),
+      fSkinTextBandMid(Artwork::text_band_midData, Artwork::text_band_midDataSize, 1),
+      fSkinTextBandHigh(Artwork::text_band_highData, Artwork::text_band_highDataSize, 1)
 {
     double samplerate = getSampleRate();
 
@@ -48,32 +52,60 @@ RezonateurUI::RezonateurUI()
     createToggleButtonForParameter(fSkinPowerSwitch, pIdBypass, 50, 330);
     fToggleButtonForParameter[pIdBypass]->setHasInvertedAppearance(true);
 
+    int xBandKnobs[3];
+
     #warning XXX test
     int sx = 50;
-    int sy = 350;
+    int sy = 380;
     createSliderForParameter(fSkinBlackKnob, pIdMode, sx, sy);
     sx += 50;
+    xBandKnobs[0] = sx;
     createSliderForParameter(fSkinGreenKnob, pIdCutoff1, sx, sy);
-    sx += 25;
+    sx += 30;
     createSliderForParameter(fSkinYellowKnob, pIdEmph1, sx, sy);
-    sx += 25;
+    sx += 30;
     createSliderForParameter(fSkinRedKnob, pIdGain1, sx, sy);
     sx += 50;
+    xBandKnobs[1] = sx;
     createSliderForParameter(fSkinGreenKnob, pIdCutoff2, sx, sy);
-    sx += 25;
+    sx += 30;
     createSliderForParameter(fSkinYellowKnob, pIdEmph2, sx, sy);
-    sx += 25;
+    sx += 30;
     createSliderForParameter(fSkinRedKnob, pIdGain2, sx, sy);
     sx += 50;
+    xBandKnobs[2] = sx;
     createSliderForParameter(fSkinGreenKnob, pIdCutoff3, sx, sy);
-    sx += 25;
+    sx += 30;
     createSliderForParameter(fSkinYellowKnob, pIdEmph3, sx, sy);
-    sx += 25;
+    sx += 30;
     createSliderForParameter(fSkinRedKnob, pIdGain3, sx, sy);
     sx += 50;
     createSliderForParameter(fSkinGreenKnob, pIdDryGain, sx, sy);
-    sx += 25;
+    sx += 30;
     createSliderForParameter(fSkinRedKnob, pIdWetGain, sx, sy);
+
+    SkinIndicator *label;
+    ///
+    label = new SkinIndicator(fSkinTextBandKnobs, this);
+    fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
+    label->setAbsolutePos(xBandKnobs[0], 360);
+    label = new SkinIndicator(fSkinTextBandKnobs, this);
+    fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
+    label->setAbsolutePos(xBandKnobs[1], 360);
+    label = new SkinIndicator(fSkinTextBandKnobs, this);
+    fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
+    label->setAbsolutePos(xBandKnobs[2], 360);
+    ///
+    label = new SkinIndicator(fSkinTextBandLow, this);
+    fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
+    label->setAbsolutePos(xBandKnobs[0], 480);
+    label = new SkinIndicator(fSkinTextBandMid, this);
+    fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
+    label->setAbsolutePos(xBandKnobs[1], 480);
+    label = new SkinIndicator(fSkinTextBandHigh, this);
+    fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
+    label->setAbsolutePos(xBandKnobs[2], 480);
+    ///
 
     SkinIndicator *levelMonitor = new SkinIndicator(fSkinLevelMonitor, this);
     fLevelMonitor.reset(levelMonitor);

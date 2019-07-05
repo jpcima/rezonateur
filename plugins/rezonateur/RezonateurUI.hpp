@@ -3,6 +3,7 @@
 #include "RezonateurShared.hpp"
 #include "Rezonateur.h"
 #include "components/KnobSkin.hpp"
+#include <list>
 #include <memory>
 #include <cstdint>
 class ResponseView;
@@ -39,7 +40,13 @@ private:
     KnobSkin fSkinPowerSwitch;
     KnobSkin fSkinLevelMonitor;
 
+    KnobSkin fSkinTextBandKnobs;
+    KnobSkin fSkinTextBandLow;
+    KnobSkin fSkinTextBandMid;
+    KnobSkin fSkinTextBandHigh;
+
     std::unique_ptr<SkinIndicator> fLevelMonitor;
+    std::list<std::unique_ptr<Widget>> fMiscWidgets;
     std::unique_ptr<SkinSlider> fSliderForParameter[Parameter_Count];
     std::unique_ptr<SkinToggleButton> fToggleButtonForParameter[Parameter_Count];
 };

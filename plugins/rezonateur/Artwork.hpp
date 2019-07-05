@@ -22,6 +22,18 @@ namespace Artwork
 
     extern const char* power_switchData;
     const unsigned int power_switchDataSize = 989;
+
+    extern const char* text_band_highData;
+    const unsigned int text_band_highDataSize = 395;
+
+    extern const char* text_band_knobsData;
+    const unsigned int text_band_knobsDataSize = 713;
+
+    extern const char* text_band_lowData;
+    const unsigned int text_band_lowDataSize = 421;
+
+    extern const char* text_band_midData;
+    const unsigned int text_band_midDataSize = 364;
 }
 
 #endif // BINARY_ARTWORK_HPP
