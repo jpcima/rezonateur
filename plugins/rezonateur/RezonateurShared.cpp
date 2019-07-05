@@ -29,7 +29,7 @@ void InitParameter(uint32_t index, Parameter &parameter)
         parameter.symbol = "gain1";
         parameter.name = "Low gain";
         parameter.hints = kParameterIsAutomable|kParameterIsLogarithmic;
-        parameter.ranges = ParameterRanges(0.5, 0.01, 3.0);
+        parameter.ranges = ParameterRanges(0.5, 0.1, 10.0);
         break;
     case pIdCutoff1:
         parameter.symbol = "cutoff1";
@@ -49,7 +49,7 @@ void InitParameter(uint32_t index, Parameter &parameter)
         parameter.symbol = "gain2";
         parameter.name = "Mid gain";
         parameter.hints = kParameterIsAutomable|kParameterIsLogarithmic;
-        parameter.ranges = ParameterRanges(0.5, 0.01, 3.0);
+        parameter.ranges = ParameterRanges(0.5, 0.1, 10.0);
         break;
     case pIdCutoff2:
         parameter.symbol = "cutoff2";
@@ -69,7 +69,7 @@ void InitParameter(uint32_t index, Parameter &parameter)
         parameter.symbol = "gain3";
         parameter.name = "High gain";
         parameter.hints = kParameterIsAutomable|kParameterIsLogarithmic;
-        parameter.ranges = ParameterRanges(0.5, 0.01, 3.0);
+        parameter.ranges = ParameterRanges(0.5, 0.1, 10.0);
         break;
     case pIdCutoff3:
         parameter.symbol = "cutoff3";
