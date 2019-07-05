@@ -29,6 +29,7 @@ FILES_UI  = \
 	Artwork.cpp \
 	components/ResponseView.cpp \
 	components/KnobSkin.cpp \
+	components/SkinIndicator.cpp \
 	components/SkinSlider.cpp \
 	components/SkinToggleButton.cpp \
 	sources/Rezonateur.cpp \

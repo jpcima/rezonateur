@@ -6,6 +6,7 @@
 SkinToggleButton::SkinToggleButton(const KnobSkin &skin, Widget *group)
     : Widget(group), fSkin(skin)
 {
+    setSize(skin.getWidth(), skin.getHeight());
 }
 
 void SkinToggleButton::setValue(bool value)

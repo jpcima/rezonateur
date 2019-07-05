@@ -6,6 +6,7 @@
 SkinSlider::SkinSlider(const KnobSkin &skin, Widget *group)
     : Widget(group), fSkin(skin)
 {
+    setSize(skin.getWidth(), skin.getHeight());
 }
 
 void SkinSlider::setValue(double value)

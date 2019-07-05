@@ -5,6 +5,9 @@
 
 namespace Artwork
 {
+    extern const char* level_monitorData;
+    const unsigned int level_monitorDataSize = 20049;
+
     extern const char* polyknob_blackData;
     const unsigned int polyknob_blackDataSize = 23668;
 

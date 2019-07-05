@@ -3,6 +3,7 @@
 #include "Window.hpp"
 #include "Cairo.hpp"
 #include "components/ResponseView.hpp"
+#include "components/SkinIndicator.hpp"
 #include "components/SkinSlider.hpp"
 #include "components/SkinToggleButton.hpp"
 #include "utility/color.h"
@@ -19,7 +20,8 @@ RezonateurUI::RezonateurUI()
       fSkinGreenKnob(Artwork::polyknob_greenData, Artwork::polyknob_greenDataSize, 31),
       fSkinYellowKnob(Artwork::polyknob_yellowData, Artwork::polyknob_yellowDataSize, 31),
       fSkinRedKnob(Artwork::polyknob_redData, Artwork::polyknob_redDataSize, 31),
-      fSkinPowerSwitch(Artwork::power_switchData, Artwork::power_switchDataSize, 2)
+      fSkinPowerSwitch(Artwork::power_switchData, Artwork::power_switchDataSize, 2),
+      fSkinLevelMonitor(Artwork::level_monitorData, Artwork::level_monitorDataSize, 31)
 {
     double samplerate = getSampleRate();
 
@@ -71,6 +73,10 @@ RezonateurUI::RezonateurUI()
     createSliderForParameter(fSkinGreenKnob, pIdDryGain, sx, sy);
     sx += 25;
     createSliderForParameter(fSkinRedKnob, pIdWetGain, sx, sy);
+
+    SkinIndicator *levelMonitor = new SkinIndicator(fSkinLevelMonitor, this);
+    fLevelMonitor.reset(levelMonitor);
+    levelMonitor->setAbsolutePos(380, 330);
 }
 
 RezonateurUI::~RezonateurUI()
@@ -168,13 +174,9 @@ void RezonateurUI::createSliderForParameter(const KnobSkin &skin, int pid, int x
 {
     DISTRHO_SAFE_ASSERT_RETURN(pid < Parameter_Count,);
 
-    unsigned w = skin.getWidth();
-    unsigned h = skin.getHeight();
-
     SkinSlider *sl = new SkinSlider(skin, this);
     fSliderForParameter[pid].reset(sl);
     sl->setAbsolutePos(x, y);
-    sl->setSize(w, h);
     sl->setOrientation(SkinSlider::Vertical);
 
     Parameter param;
@@ -197,13 +199,9 @@ void RezonateurUI::createToggleButtonForParameter(const KnobSkin &skin, int pid,
 {
     DISTRHO_SAFE_ASSERT_RETURN(pid < Parameter_Count,);
 
-    unsigned w = skin.getWidth();
-    unsigned h = skin.getHeight();
-
     SkinToggleButton *cb = new SkinToggleButton(skin, this);
     fToggleButtonForParameter[pid].reset(cb);
     cb->setAbsolutePos(x, y);
-    cb->setSize(w, h);
 
     Parameter param;
     InitParameter(pid, param);

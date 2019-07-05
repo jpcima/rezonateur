@@ -6,6 +6,7 @@
 #include <memory>
 #include <cstdint>
 class ResponseView;
+class SkinIndicator;
 class SkinSlider;
 class SkinToggleButton;
 
@@ -35,7 +36,9 @@ private:
     KnobSkin fSkinYellowKnob;
     KnobSkin fSkinRedKnob;
     KnobSkin fSkinPowerSwitch;
+    KnobSkin fSkinLevelMonitor;
 
+    std::unique_ptr<SkinIndicator> fLevelMonitor;
     std::unique_ptr<SkinSlider> fSliderForParameter[Parameter_Count];
     std::unique_ptr<SkinToggleButton> fToggleButtonForParameter[Parameter_Count];
 };
