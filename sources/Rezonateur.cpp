@@ -35,6 +35,7 @@ void Rezonateur::setFilterMode(int mode)
     for (unsigned i = 0; i < 3; ++i) {
         VAStateVariableFilter &filter = fFilters[i];
         filter.setFilterType(ftype);
+        filter.clear();
     }
 }
 
