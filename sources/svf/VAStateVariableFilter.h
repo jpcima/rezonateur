@@ -112,6 +112,11 @@ public:
     void process(const float *input, float *output, unsigned count);
 
     //------------------------------------------------------------------------------
+    /**    Reset the state variables.
+    */
+    void clear();
+
+    //------------------------------------------------------------------------------
     /**    Compute the transfer function at given frequency.
     */
     std::complex<double> calcTransfer(double freq) const;

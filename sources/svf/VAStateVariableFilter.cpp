@@ -222,6 +222,12 @@ void VAStateVariableFilter::process(const float *input, float *output, unsigned 
     }
 }
 
+void VAStateVariableFilter::clear()
+{
+    z1_A = 0;
+    z2_A = 0;
+}
+
 std::complex<double> VAStateVariableFilter::calcTransfer(double freq) const
 {
     double w = 2 * M_PI * freq;
