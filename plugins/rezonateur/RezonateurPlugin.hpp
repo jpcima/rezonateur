@@ -28,6 +28,7 @@ public:
 
 private:
     bool fBypassed;
+    float fPreGain;
     float fDryGain;
     float fWetGain;
     float fCurrentOutputLevel;

@@ -1,4 +1,5 @@
 #include "Rezonateur.h"
+#include <cstring>
 #include <cassert>
 
 static constexpr unsigned bufferLimit = 256;
@@ -31,8 +32,10 @@ void Rezonateur::setFilterMode(int mode)
 
     fMode = mode;
 
-    for (unsigned i = 0; i < 3; ++i)
-        fFilters[i].setFilterType(ftype);
+    for (unsigned i = 0; i < 3; ++i) {
+        VAStateVariableFilter &filter = fFilters[i];
+        filter.setFilterType(ftype);
+    }
 }
 
 void Rezonateur::setFilterGain(unsigned nth, float gain)
@@ -92,6 +95,8 @@ void Rezonateur::processWithinBufferLimit(const float *input, float *output, uns
     float filterGains[3];
     getEffectiveFilterGains(filterGains);
 
+    float accum[bufferLimit];
+
     ///
     for (unsigned b = 0; b < 3; ++b) {
         float g = filterGains[b];
@@ -101,13 +106,15 @@ void Rezonateur::processWithinBufferLimit(const float *input, float *output, uns
 
         if (b == 0) {
             for (unsigned i = 0; i < count; ++i)
-                output[i] = g * filterOutput[i];
+                accum[i] = g * filterOutput[i];
         }
         else {
             for (unsigned i = 0; i < count; ++i)
-                output[i] += g * filterOutput[i];
+                accum[i] += g * filterOutput[i];
         }
     }
+
+    memcpy(output, accum, count * sizeof(float));
 }
 
 void Rezonateur::getEffectiveFilterGains(float gains[3]) const

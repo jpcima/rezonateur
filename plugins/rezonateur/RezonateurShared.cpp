@@ -84,6 +84,12 @@ void InitParameter(uint32_t index, Parameter &parameter)
         parameter.hints = kParameterIsAutomable|kParameterIsLogarithmic;
         parameter.ranges = ParameterRanges(5.0, 0.1, 10.0);
         break;
+    case pIdPreGain:
+        parameter.symbol = "pre";
+        parameter.name = "Pre gain";
+        parameter.hints = kParameterIsAutomable|kParameterIsLogarithmic;
+        parameter.ranges = ParameterRanges(1.0, 0.1, 10.0);
+        break;
     case pIdDryGain:
         parameter.symbol = "dry";
         parameter.name = "Dry gain";

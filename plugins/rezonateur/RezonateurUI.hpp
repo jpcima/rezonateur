@@ -49,7 +49,7 @@ private:
     KnobSkin fSkinTextBandLow;
     KnobSkin fSkinTextBandMid;
     KnobSkin fSkinTextBandHigh;
-    KnobSkin fSkinTextWetDry;
+    KnobSkin fSkinTextPreDryWet;
 
     std::unique_ptr<SkinIndicator> fLevelMonitor;
     std::list<std::unique_ptr<Widget>> fMiscWidgets;

@@ -43,6 +43,7 @@ enum {
     pIdCutoff3,
     pIdEmph3,
 
+    pIdPreGain,
     pIdDryGain,
     pIdWetGain,
 

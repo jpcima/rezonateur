@@ -29,7 +29,7 @@ RezonateurUI::RezonateurUI()
       fSkinTextBandLow(Artwork::text_band_lowData, Artwork::text_band_lowDataSize, 1),
       fSkinTextBandMid(Artwork::text_band_midData, Artwork::text_band_midDataSize, 1),
       fSkinTextBandHigh(Artwork::text_band_highData, Artwork::text_band_highDataSize, 1),
-      fSkinTextWetDry(Artwork::text_wet_dryData, Artwork::text_wet_dryDataSize, 1)
+      fSkinTextPreDryWet(Artwork::text_pre_dry_wetData, Artwork::text_pre_dry_wetDataSize, 1)
 {
     for (unsigned p = 0; p < Parameter_Count; ++p)
         InitParameter(p, fParameters[p]);
@@ -43,7 +43,7 @@ RezonateurUI::RezonateurUI()
     fResponseView.reset(rezView);
 
     rezView->setAbsolutePos(50, 20);
-    rezView->setSize(400, 300);
+    rezView->setSize(430, 300);
 
     for (unsigned b = 0; b < 4; ++b) {
         static const ColorRGBA8 colors[4] = {
@@ -65,7 +65,7 @@ RezonateurUI::RezonateurUI()
     int xOffPassMode = -12;
     int xOffSidePassMode = -40;
     int xOffBandKnobs = -2;
-    int xOffWetDry = -12;
+    int xOffPreWetDry = -2;
 
     int sx = 50;
     int sy = 380;
@@ -94,9 +94,11 @@ RezonateurUI::RezonateurUI()
     createSliderForParameter(fSkinRedKnob, pIdGain3, sx, sy);
     sx += 50;
     xWetDry = sx;
-    createSliderForParameter(fSkinGreenKnob, pIdWetGain, sx, sy);
+    createSliderForParameter(fSkinGreenKnob, pIdPreGain, sx, sy);
     sx += 30;
-    createSliderForParameter(fSkinRedKnob, pIdDryGain, sx, sy);
+    createSliderForParameter(fSkinYellowKnob, pIdDryGain, sx, sy);
+    sx += 30;
+    createSliderForParameter(fSkinRedKnob, pIdWetGain, sx, sy);
 
     SkinIndicator *label;
     ///
@@ -127,21 +129,21 @@ RezonateurUI::RezonateurUI()
     fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
     label->setAbsolutePos(xBandKnobs[2] + xOffBandKnobs, 480);
     ///
-    label = new SkinIndicator(fSkinTextWetDry, this);
+    label = new SkinIndicator(fSkinTextPreDryWet, this);
     fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
-    label->setAbsolutePos(xWetDry + xOffWetDry, 360);
+    label->setAbsolutePos(xWetDry + xOffPreWetDry, 360);
     ///
 
     SkinIndicator *levelMonitor = new SkinIndicator(fSkinLevelMonitor, this);
     fLevelMonitor.reset(levelMonitor);
-    levelMonitor->setAbsolutePos(390, 330);
+    levelMonitor->setAbsolutePos(420, 330);
 }
 
 RezonateurUI::~RezonateurUI()
 {
 }
 
-const unsigned RezonateurUI::ui_width = 500;
+const unsigned RezonateurUI::ui_width = 530;
 const unsigned RezonateurUI::ui_height = 500;
 
 void RezonateurUI::onDisplay()

@@ -90,6 +90,8 @@ float RezonateurPlugin::getParameterValue(uint32_t index) const
         return rez.getFilterCutoff(2);
     case pIdEmph3:
         return rez.getFilterEmph(2);
+    case pIdPreGain:
+        return fPreGain;
     case pIdDryGain:
         return fDryGain;
     case pIdWetGain:
@@ -137,6 +139,9 @@ void RezonateurPlugin::setParameterValue(uint32_t index, float value)
     case pIdEmph3:
         rez.setFilterEmph(2, value);
         break;
+    case pIdPreGain:
+        fPreGain = value;
+        break;
     case pIdDryGain:
         fDryGain = value;
         break;
@@ -163,10 +168,13 @@ void RezonateurPlugin::run(const float **inputs, float **outputs, uint32_t frame
     WebCore::DenormalDisabler noDenormals;
 
     Rezonateur &rez = fRez;
-    rez.process(input, output, frames);
-
+    float pre = fPreGain;
     float dry = fDryGain;
     float wet = fWetGain;
+
+    for (unsigned i = 0; i < frames; ++i)
+        output[i] = pre * input[i];
+    rez.process(output, output, frames);
 
     AmpFollower &levelFollower = fOutputLevelFollower;
     float level = fCurrentOutputLevel;
