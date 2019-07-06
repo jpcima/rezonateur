@@ -6,6 +6,11 @@
 #include <cstdint>
 
 class RezonateurPlugin : public Plugin {
+    static constexpr unsigned NumChannels = DISTRHO_PLUGIN_NUM_INPUTS;
+
+    static_assert(DISTRHO_PLUGIN_NUM_INPUTS == DISTRHO_PLUGIN_NUM_OUTPUTS,
+                  "Need to have as many inputs as outputs");
+
 public:
     RezonateurPlugin();
     ~RezonateurPlugin();
@@ -24,14 +29,14 @@ public:
 
     void run(const float **inputs, float **outputs, uint32_t frames) override;
 
-    float getCurrentOutputLevel() const { return fCurrentOutputLevel; }
+    float getCurrentOutputLevel() const;
 
 private:
     bool fBypassed;
     float fPreGain;
     float fDryGain;
     float fWetGain;
-    float fCurrentOutputLevel;
-    AmpFollower fOutputLevelFollower;
-    Rezonateur fRez;
+    float fCurrentOutputLevel[NumChannels];
+    AmpFollower fOutputLevelFollower[NumChannels];
+    Rezonateur fRez[NumChannels];
 };

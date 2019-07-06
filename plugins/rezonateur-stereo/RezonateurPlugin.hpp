@@ -1,0 +1,1 @@
+#include "../rezonateur/RezonateurPlugin.hpp"

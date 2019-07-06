@@ -14,7 +14,7 @@ all: dgl plugins gen
 
 # --------------------------------------------------------------
 
-PLUGINS := rezonateur
+PLUGINS := rezonateur rezonateur-stereo
 
 dgl:
 	$(MAKE) -C dpf/dgl

@@ -1,5 +1,4 @@
 #pragma once
-#include <cstdint>
 
 #define DISTRHO_PLUGIN_BRAND           "Jean Pierre Cimalando"
 #define DISTRHO_PLUGIN_NAME            "Rezonateur"
@@ -10,7 +9,7 @@
 #define DISTRHO_PLUGIN_LABEL           "Rezonateur"
 #define DISTRHO_PLUGIN_LICENSE         "http://spdx.org/licenses/BSL-1.0"
 #define DISTRHO_PLUGIN_MAKER           "Jean Pierre Cimalando"
-#define DISTRHO_PLUGIN_DESCRIPTION     "4-band resonator"
+#define DISTRHO_PLUGIN_DESCRIPTION     "3-band resonator"
 #define DISTRHO_PLUGIN_NUM_INPUTS      1
 #define DISTRHO_PLUGIN_NUM_OUTPUTS     1
 #define DISTRHO_PLUGIN_IS_SYNTH        0
@@ -25,33 +24,3 @@
 
 // for level monitoring
 #define DISTRHO_PLUGIN_WANT_DIRECT_ACCESS 1
-
-enum {
-    pIdBypass,
-
-    pIdMode,
-
-    pIdGain1,
-    pIdCutoff1,
-    pIdEmph1,
-
-    pIdGain2,
-    pIdCutoff2,
-    pIdEmph2,
-
-    pIdGain3,
-    pIdCutoff3,
-    pIdEmph3,
-
-    pIdPreGain,
-    pIdDryGain,
-    pIdWetGain,
-
-    ///
-    Parameter_Count
-};
-
-enum {
-    ///
-    State_Count,
-};

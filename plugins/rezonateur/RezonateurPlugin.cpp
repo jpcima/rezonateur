@@ -2,15 +2,18 @@
 #include "DenormalDisabler.h"
 #include <cstring>
 
+constexpr unsigned RezonateurPlugin::NumChannels;
+
 RezonateurPlugin::RezonateurPlugin()
     : Plugin(Parameter_Count, DISTRHO_PLUGIN_NUM_PROGRAMS, State_Count),
-      fCurrentOutputLevel(0.0)
+      fCurrentOutputLevel{}
 {
     double samplerate = getSampleRate();
 
-    fOutputLevelFollower.release(0.5 * samplerate);
-
-    fRez.init(samplerate);
+    for (unsigned c = 0; c < NumChannels; ++c) {
+        fOutputLevelFollower[c].release(0.5 * samplerate);
+        fRez[c].init(samplerate);
+    }
 
     for (unsigned p = 0; p < Parameter_Count; ++p) {
         Parameter param;
@@ -65,31 +68,29 @@ void RezonateurPlugin::initParameter(uint32_t index, Parameter &parameter)
 
 float RezonateurPlugin::getParameterValue(uint32_t index) const
 {
-    const Rezonateur &rez = fRez;
-
     switch (index) {
     case pIdBypass:
         return fBypassed;
     case pIdMode:
-        return rez.getFilterMode();
+        return fRez[0].getFilterMode();
     case pIdGain1:
-        return rez.getFilterGain(0);
+        return fRez[0].getFilterGain(0);
     case pIdCutoff1:
-        return rez.getFilterCutoff(0);
+        return fRez[0].getFilterCutoff(0);
     case pIdEmph1:
-        return rez.getFilterEmph(0);
+        return fRez[0].getFilterEmph(0);
     case pIdGain2:
-        return rez.getFilterGain(1);
+        return fRez[0].getFilterGain(1);
     case pIdCutoff2:
-        return rez.getFilterCutoff(1);
+        return fRez[0].getFilterCutoff(1);
     case pIdEmph2:
-        return rez.getFilterEmph(1);
+        return fRez[0].getFilterEmph(1);
     case pIdGain3:
-        return rez.getFilterGain(2);
+        return fRez[0].getFilterGain(2);
     case pIdCutoff3:
-        return rez.getFilterCutoff(2);
+        return fRez[0].getFilterCutoff(2);
     case pIdEmph3:
-        return rez.getFilterEmph(2);
+        return fRez[0].getFilterEmph(2);
     case pIdPreGain:
         return fPreGain;
     case pIdDryGain:
@@ -103,41 +104,49 @@ float RezonateurPlugin::getParameterValue(uint32_t index) const
 
 void RezonateurPlugin::setParameterValue(uint32_t index, float value)
 {
-    Rezonateur &rez = fRez;
-
     switch (index) {
     case pIdBypass:
         fBypassed = value > 0.5f;
         break;
     case pIdMode:
-        rez.setFilterMode((int)value);
+        for (unsigned c = 0; c < NumChannels; ++c)
+            fRez[c].setFilterMode((int)value);
         break;
     case pIdGain1:
-        rez.setFilterGain(0, value);
+        for (unsigned c = 0; c < NumChannels; ++c)
+            fRez[c].setFilterGain(0, value);
         break;
     case pIdCutoff1:
-        rez.setFilterCutoff(0, value);
+        for (unsigned c = 0; c < NumChannels; ++c)
+            fRez[c].setFilterCutoff(0, value);
         break;
     case pIdEmph1:
-        rez.setFilterEmph(0, value);
+        for (unsigned c = 0; c < NumChannels; ++c)
+            fRez[c].setFilterEmph(0, value);
         break;
     case pIdGain2:
-        rez.setFilterGain(1, value);
+        for (unsigned c = 0; c < NumChannels; ++c)
+            fRez[c].setFilterGain(1, value);
         break;
     case pIdCutoff2:
-        rez.setFilterCutoff(1, value);
+        for (unsigned c = 0; c < NumChannels; ++c)
+            fRez[c].setFilterCutoff(1, value);
         break;
     case pIdEmph2:
-        rez.setFilterEmph(1, value);
+        for (unsigned c = 0; c < NumChannels; ++c)
+            fRez[c].setFilterEmph(1, value);
         break;
     case pIdGain3:
-        rez.setFilterGain(2, value);
+        for (unsigned c = 0; c < NumChannels; ++c)
+            fRez[c].setFilterGain(2, value);
         break;
     case pIdCutoff3:
-        rez.setFilterCutoff(2, value);
+        for (unsigned c = 0; c < NumChannels; ++c)
+            fRez[c].setFilterCutoff(2, value);
         break;
     case pIdEmph3:
-        rez.setFilterEmph(2, value);
+        for (unsigned c = 0; c < NumChannels; ++c)
+            fRez[c].setFilterEmph(2, value);
         break;
     case pIdPreGain:
         fPreGain = value;
@@ -155,37 +164,51 @@ void RezonateurPlugin::setParameterValue(uint32_t index, float value)
 
 void RezonateurPlugin::run(const float **inputs, float **outputs, uint32_t frames)
 {
-    const float *input = inputs[0];
-    float *output = outputs[0];
-
     if (fBypassed) {
-        memcpy(output, input, frames * sizeof(float));
-        fOutputLevelFollower.clear();
-        fCurrentOutputLevel = 0;
+        for (unsigned c = 0; c < NumChannels; ++c) {
+            memcpy(outputs[c], inputs[c], frames * sizeof(float));
+            fOutputLevelFollower[c].clear();
+            fCurrentOutputLevel[c] = 0;
+        }
         return;
     }
 
     WebCore::DenormalDisabler noDenormals;
 
-    Rezonateur &rez = fRez;
     float pre = fPreGain;
     float dry = fDryGain;
     float wet = fWetGain;
 
-    for (unsigned i = 0; i < frames; ++i)
-        output[i] = pre * input[i];
-    rez.process(output, output, frames);
+    for (unsigned c = 0; c < NumChannels; ++c) {
+        Rezonateur &rez = fRez[c];
+        const float *input = inputs[c];
+        float *output = outputs[c];
 
-    AmpFollower &levelFollower = fOutputLevelFollower;
-    float level = fCurrentOutputLevel;
+        for (unsigned i = 0; i < frames; ++i)
+            output[i] = pre * input[i];
+        rez.process(output, output, frames);
 
-    for (unsigned i = 0; i < frames; ++i) {
-        float out = dry * input[i] + wet * output[i];
-        level = levelFollower.process(out);
-        output[i] = out;
+        AmpFollower &levelFollower = fOutputLevelFollower[c];
+        float level = fCurrentOutputLevel[c];
+
+        for (unsigned i = 0; i < frames; ++i) {
+            float out = dry * input[i] + wet * output[i];
+            level = levelFollower.process(out);
+            output[i] = out;
+        }
+
+        fCurrentOutputLevel[c] = level;
     }
+}
 
-    fCurrentOutputLevel = level;
+float RezonateurPlugin::getCurrentOutputLevel() const
+{
+    float level = fCurrentOutputLevel[0];
+    for (unsigned c = 1; c < NumChannels; ++c) {
+        float other = fCurrentOutputLevel[c];
+        level = (level > other) ? level : other;
+    }
+    return level;
 }
 
 ///
