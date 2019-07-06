@@ -6,6 +6,10 @@ This resonator consists of 3 multi-mode resonant filters which cover independent
 - Mid: 300 Hz - 1.5 kHz
 - High: 1.5 kHz - 7.5 kHz
 
+## Download
+
+Get from [Open Build Service](https://software.opensuse.org//download.html?project=home%3Ajpcima&package=rezonateur).
+
 ## Build instructions
 
 1. Obtain prerequisites
