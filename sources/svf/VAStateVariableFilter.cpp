@@ -155,15 +155,13 @@ void VAStateVariableFilter::processInternally(const float *input, float *output,
     for (unsigned i = 0; i < count; ++i) {
         double in = input[i];
 
-        #pragma message("TODO: stabilize analog saturation of filter")
-
-        double HP = (in - /*analogSaturate*/((2.0 * RCoeff + gCoeff) * z1_A) - z2_A)
+        double HP = (in - ((2.0 * RCoeff + gCoeff) * z1_A) - z2_A)
             * (1.0 / (1.0 + (2.0 * RCoeff * gCoeff) + gCoeff * gCoeff));
         double BP = HP * gCoeff + z1_A;
         double LP = BP * gCoeff + z2_A;
 
-        z1_A = gCoeff * HP + BP;        // unit delay (state variable)
-        z2_A = gCoeff * BP + LP;        // unit delay (state variable)
+        z1_A = analogSaturate(gCoeff * HP + BP);        // unit delay (state variable)
+        z2_A = analogSaturate(gCoeff * BP + LP);        // unit delay (state variable)
 
         // Selects which filter type this function will output.
         double out = 0.0;
