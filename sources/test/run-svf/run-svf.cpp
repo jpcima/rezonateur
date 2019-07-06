@@ -13,6 +13,7 @@
 #include <cassert>
 
 static constexpr unsigned FilterCount = 6;
+static constexpr jack_nframes_t MaxNumFrames = 256;
 
 enum ProcessMode {
     Process_Sum,
@@ -28,6 +29,7 @@ struct AudioContext {
     jack_client_t *client = nullptr;
     jack_port_t *p_in = nullptr;
     jack_port_t *p_out = nullptr;
+    float work_buffer[MaxNumFrames];
 };
 
 static int process(jack_nframes_t nframes, void *userdata)
@@ -49,9 +51,8 @@ static int process(jack_nframes_t nframes, void *userdata)
         assert(false);
         /* fall through */
     case Process_Sum: {
-        constexpr jack_nframes_t max_nframes = 256;
         while (nframes > 0) {
-            jack_nframes_t current = (nframes < max_nframes) ? nframes : max_nframes;
+            jack_nframes_t current = (nframes < MaxNumFrames) ? nframes : MaxNumFrames;
 
             for (jack_nframes_t i = 0; i < nframes; ++i)
                 out[i] = 0;
@@ -60,7 +61,7 @@ static int process(jack_nframes_t nframes, void *userdata)
                 if (!ctx->enable_filter[f])
                     continue;
                 VAStateVariableFilter &filter = ctx->filter[f];
-                float temp[max_nframes];
+                float *temp = ctx->work_buffer;
 
                 filter.process(in, temp, nframes);
 

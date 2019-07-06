@@ -1,6 +1,7 @@
 #pragma once
 #include "svf/VAStateVariableFilter.h"
 #include <complex>
+#include <memory>
 
 class Rezonateur {
 public:
@@ -35,4 +36,13 @@ private:
     int fMode;
     float fFilterGains[3];
     VAStateVariableFilter fFilters[3];
+
+private:
+    void allocateWorkBuffers(unsigned count);
+    float *getWorkBuffer(unsigned index);
+
+private:
+    unsigned fNumWorkBuffers = 0;
+    std::unique_ptr<float[]> fWorkBuffers;
+    static constexpr unsigned sBufferLimit = 256;
 };

@@ -2,10 +2,10 @@
 #include <cstring>
 #include <cassert>
 
-static constexpr unsigned bufferLimit = 256;
-
 void Rezonateur::init(double samplerate)
 {
+    allocateWorkBuffers(2);
+
     int mode = LowpassMode;
     int ftype = getFilterTypeForMode(mode);
 
@@ -83,8 +83,8 @@ float Rezonateur::getFilterEmph(unsigned nth) const
 void Rezonateur::process(const float *input, float *output, unsigned count)
 {
     while (count > 0) {
-        unsigned current = (count < bufferLimit) ? count : bufferLimit;
-        processWithinBufferLimit(input, output, count);
+        unsigned current = (count < sBufferLimit) ? count : sBufferLimit;
+        processWithinBufferLimit(input, output, current);
         input += current;
         output += current;
         count -= current;
@@ -96,13 +96,13 @@ void Rezonateur::processWithinBufferLimit(const float *input, float *output, uns
     float filterGains[3];
     getEffectiveFilterGains(filterGains);
 
-    float accum[bufferLimit];
+    float *accum = getWorkBuffer(0);
 
     ///
     for (unsigned b = 0; b < 3; ++b) {
         float g = filterGains[b];
 
-        float filterOutput[bufferLimit];
+        float *filterOutput = getWorkBuffer(1);
         fFilters[b].process(input, filterOutput, count);
 
         if (b == 0) {
@@ -155,3 +155,17 @@ double Rezonateur::getResponseGain(double f) const
 
     return std::abs(h);
 }
+
+void Rezonateur::allocateWorkBuffers(unsigned count)
+{
+    fWorkBuffers.reset(new float[count * sBufferLimit]);
+    fNumWorkBuffers = count;
+}
+
+float *Rezonateur::getWorkBuffer(unsigned index)
+{
+    assert(index < fNumWorkBuffers);
+    return &fWorkBuffers[index * sBufferLimit];
+}
+
+constexpr unsigned Rezonateur::sBufferLimit;
