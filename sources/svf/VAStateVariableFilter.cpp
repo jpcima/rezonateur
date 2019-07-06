@@ -28,19 +28,19 @@ static double resonanceToQ(double resonance)
 
 VAStateVariableFilter::VAStateVariableFilter()
 {
-    sampleRate = 44100.0f;                // default sample rate when constructed
+    sampleRate = 44100.0;                // default sample rate when constructed
     filterType = SVFLowpass;            // lowpass filter by default
 
-    gCoeff = 1.0f;
-    RCoeff = 1.0f;
-    KCoeff = 0.0f;
+    gCoeff = 1.0;
+    RCoeff = 1.0;
+    KCoeff = 0.0;
 
-    cutoffFreq = 1000.0f;
-    Q = static_cast<float>(resonanceToQ(0.5));
-    shelfGain = 1.0f;
+    cutoffFreq = 1000.0;
+    Q = resonanceToQ(0.5);
+    shelfGain = 1.0;
 
-    z1_A = 0.0f;
-    z2_A = 0.0f;
+    z1_A = 0.0;
+    z2_A = 0.0;
 }
 
 VAStateVariableFilter::~VAStateVariableFilter()
@@ -54,7 +54,7 @@ void VAStateVariableFilter::setFilterType(int newType)
     filterType = newType;
 }
 
-void VAStateVariableFilter::setCutoffFreq(float newCutoffFreq)
+void VAStateVariableFilter::setCutoffFreq(double newCutoffFreq)
 {
     if (cutoffFreq == newCutoffFreq)
         return;
@@ -63,12 +63,12 @@ void VAStateVariableFilter::setCutoffFreq(float newCutoffFreq)
     calcFilter();
 }
 
-void VAStateVariableFilter::setResonance(float newResonance)
+void VAStateVariableFilter::setResonance(double newResonance)
 {
-    setQ(static_cast<float>(resonanceToQ(newResonance)));
+    setQ(resonanceToQ(newResonance));
 }
 
-void VAStateVariableFilter::setQ(float newQ)
+void VAStateVariableFilter::setQ(double newQ)
 {
     if (Q == newQ)
         return;
@@ -77,7 +77,7 @@ void VAStateVariableFilter::setQ(float newQ)
     calcFilter();
 }
 
-void VAStateVariableFilter::setShelfGain(float newGain)
+void VAStateVariableFilter::setShelfGain(double newGain)
 {
     if (shelfGain == newGain)
         return;
@@ -86,10 +86,10 @@ void VAStateVariableFilter::setShelfGain(float newGain)
     calcFilter();
 }
 
-void VAStateVariableFilter::setFilter(int newType, float newCutoffFreq,
-                                      float newResonance, float newShelfGain)
+void VAStateVariableFilter::setFilter(int newType, double newCutoffFreq,
+                                      double newResonance, double newShelfGain)
 {
-    float newQ = static_cast<float>(resonanceToQ(newResonance));
+    double newQ = resonanceToQ(newResonance);
 
     if (filterType == newType && cutoffFreq == newCutoffFreq && Q == newQ && shelfGain == newShelfGain)
         return;
@@ -101,7 +101,7 @@ void VAStateVariableFilter::setFilter(int newType, float newCutoffFreq,
     calcFilter();
 }
 
-void VAStateVariableFilter::setSampleRate(float newSampleRate)
+void VAStateVariableFilter::setSampleRate(double newSampleRate)
 {
     if (sampleRate == newSampleRate)
         return;
@@ -114,21 +114,21 @@ void VAStateVariableFilter::setSampleRate(float newSampleRate)
 void VAStateVariableFilter::calcFilter()
 {
     // prewarp the cutoff (for bilinear-transform filters)
-    float wd = static_cast<float>(cutoffFreq * 2.0f * M_PI);
-    float T = 1.0f / (float)sampleRate;
-    float wa = (2.0f / T) * std::tan(wd * T / 2.0f);
+    double wd = cutoffFreq * (2.0 * M_PI);
+    double T = 1.0 / sampleRate;
+    double wa = (2.0 / T) * std::tan(wd * T / 2.0);
 
     // Calculate g (gain element of integrator)
-    gCoeff = wa * T / 2.0f;            // Calculate g (gain element of integrator)
+    gCoeff = wa * T / 2.0;            // Calculate g (gain element of integrator)
 
     // Calculate Zavalishin's R from Q (referred to as damping parameter)
-    RCoeff = 1.0f / (2.0f * Q);
+    RCoeff = 1.0 / (2.0 * Q);
 
     // Gain for BandShelving filter
     KCoeff = shelfGain;
 }
 
-static float analogSaturate(float x)
+static double analogSaturate(double x)
 {
     #pragma message("TODO: simple filter analog saturation, oversampled processing")
 
@@ -137,7 +137,7 @@ static float analogSaturate(float x)
     else if (x < -1)
         x = -2. / 3.;
     else
-        x = x - (x * x * x) * (1.0f / 3.0f);
+        x = x - (x * x * x) * (1.0 / 3.0);
 
     return x;
 }
@@ -145,26 +145,26 @@ static float analogSaturate(float x)
 template <int FilterType>
 void VAStateVariableFilter::processInternally(const float *input, float *output, unsigned count)
 {
-    const float gCoeff = this->gCoeff;
-    const float RCoeff = this->RCoeff;
-    const float KCoeff = this->KCoeff;
+    const double gCoeff = this->gCoeff;
+    const double RCoeff = this->RCoeff;
+    const double KCoeff = this->KCoeff;
 
-    float z1_A = this->z1_A;
-    float z2_A = this->z2_A;
+    double z1_A = this->z1_A;
+    double z2_A = this->z2_A;
 
     for (unsigned i = 0; i < count; ++i) {
-        float in = input[i];
+        double in = input[i];
 
-        float HP = (in - analogSaturate((2.0f * RCoeff + gCoeff) * z1_A) - z2_A)
-            * (1.0f / (1.0f + (2.0f * RCoeff * gCoeff) + gCoeff * gCoeff));
-        float BP = HP * gCoeff + z1_A;
-        float LP = BP * gCoeff + z2_A;
+        double HP = (in - analogSaturate((2.0 * RCoeff + gCoeff) * z1_A) - z2_A)
+            * (1.0 / (1.0 + (2.0 * RCoeff * gCoeff) + gCoeff * gCoeff));
+        double BP = HP * gCoeff + z1_A;
+        double LP = BP * gCoeff + z2_A;
 
         z1_A = gCoeff * HP + BP;        // unit delay (state variable)
         z2_A = gCoeff * BP + LP;        // unit delay (state variable)
 
         // Selects which filter type this function will output.
-        float out = 0.0f;
+        double out = 0.0;
         if_constexpr (FilterType == SVFLowpass)
             out = LP;
         else if_constexpr (FilterType == SVFBandpass)
@@ -172,13 +172,13 @@ void VAStateVariableFilter::processInternally(const float *input, float *output,
         else if_constexpr (FilterType == SVFHighpass)
             out = HP;
         else if_constexpr (FilterType == SVFUnitGainBandpass)
-            out = 2.0f * RCoeff * BP;
+            out = 2.0 * RCoeff * BP;
         else if_constexpr (FilterType == SVFBandShelving)
-            out = in + 2.0f * RCoeff * KCoeff * BP;
+            out = in + 2.0 * RCoeff * KCoeff * BP;
         else if_constexpr (FilterType == SVFNotch)
-            out = in - 2.0f * RCoeff * BP;
+            out = in - 2.0 * RCoeff * BP;
         else if_constexpr (FilterType == SVFAllpass)
-            out = in - 4.0f * RCoeff * BP;
+            out = in - 4.0 * RCoeff * BP;
         else if_constexpr (FilterType == SVFPeak)
             out = LP - HP;
 

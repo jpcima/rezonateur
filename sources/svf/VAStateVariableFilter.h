@@ -75,36 +75,36 @@ public:
 
     //------------------------------------------------------------------------------
     /**    Used for changing the filter's cutoff parameter linearly by frequency (Hz) */
-    void setCutoffFreq(float newCutoffFreq);
+    void setCutoffFreq(double newCutoffFreq);
 
     //------------------------------------------------------------------------------
     /** Used for setting the resonance amount. This is then converted to a Q
         value, which is used by the filter.
         Range: (0-1)
     */
-    void setResonance(float newResonance);
+    void setResonance(double newResonance);
 
     //------------------------------------------------------------------------------
     /** Used for setting the filter's Q amount. This is then converted to a
         damping parameter called R, which is used in the original filter.
     */
-    void setQ(float newQ);
+    void setQ(double newQ);
 
     //------------------------------------------------------------------------------
     /**    Sets the gain of the shelf for the BandShelving filter only. */
-    void setShelfGain(float newGain);
+    void setShelfGain(double newGain);
 
     //------------------------------------------------------------------------------
     /**    Statically set the filters parameters. */
-    void setFilter(int newType, float newCutoff,
-                   float newResonance, float newShelfGain);
+    void setFilter(int newType, double newCutoff,
+                   double newResonance, double newShelfGain);
 
     //------------------------------------------------------------------------------
     /**    Set the sample rate used by the host. Needs to be used to accurately
         calculate the coefficients of the filter from the cutoff.
         Note: This is often used in AudioProcessor::prepareToPlay
     */
-    void setSampleRate(float newSampleRate);
+    void setSampleRate(double newSampleRate);
 
     //------------------------------------------------------------------------------
     /**    Performs the actual processing.
@@ -138,18 +138,18 @@ private:
 
     //    Parameters:
     int filterType;
-    float cutoffFreq;
-    float Q;
-    float shelfGain;
+    double cutoffFreq;
+    double Q;
+    double shelfGain;
 
-    float sampleRate;
+    double sampleRate;
 
     //    Coefficients:
-    float gCoeff;        // gain element
-    float RCoeff;        // feedback damping element
-    float KCoeff;        // shelf gain element
+    double gCoeff;        // gain element
+    double RCoeff;        // feedback damping element
+    double KCoeff;        // shelf gain element
 
-    float z1_A, z2_A;        // state variables (z^-1)
+    double z1_A, z2_A;        // state variables (z^-1)
 
 private:
     static std::complex<double> calcTransferLowpass(double w, double wc, double r);
