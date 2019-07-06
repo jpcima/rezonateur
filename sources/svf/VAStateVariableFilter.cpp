@@ -155,7 +155,9 @@ void VAStateVariableFilter::processInternally(const float *input, float *output,
     for (unsigned i = 0; i < count; ++i) {
         double in = input[i];
 
-        double HP = (in - analogSaturate((2.0 * RCoeff + gCoeff) * z1_A) - z2_A)
+        #pragma message("TODO: stabilize analog saturation of filter")
+
+        double HP = (in - /*analogSaturate*/((2.0 * RCoeff + gCoeff) * z1_A) - z2_A)
             * (1.0 / (1.0 + (2.0 * RCoeff * gCoeff) + gCoeff * gCoeff));
         double BP = HP * gCoeff + z1_A;
         double LP = BP * gCoeff + z2_A;
