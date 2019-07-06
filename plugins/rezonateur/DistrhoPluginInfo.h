@@ -1,12 +1,12 @@
 #pragma once
 
 #define DISTRHO_PLUGIN_BRAND           "Jean Pierre Cimalando"
-#define DISTRHO_PLUGIN_NAME            "Rezonateur"
+#define DISTRHO_PLUGIN_NAME            u8"Rézonateur"
 #define DISTRHO_PLUGIN_URI             "http://jpcima.sdf1.org/lv2/rezonateur"
 #define DISTRHO_PLUGIN_HOMEPAGE        "https://github.com/jpcima/rezonateur"
 #define DISTRHO_PLUGIN_UNIQUE_ID       'r','e','z','o'
 #define DISTRHO_PLUGIN_VERSION         0,0,0
-#define DISTRHO_PLUGIN_LABEL           "Rezonateur"
+#define DISTRHO_PLUGIN_LABEL           u8"Rézonateur"
 #define DISTRHO_PLUGIN_LICENSE         "http://spdx.org/licenses/BSL-1.0"
 #define DISTRHO_PLUGIN_MAKER           "Jean Pierre Cimalando"
 #define DISTRHO_PLUGIN_DESCRIPTION     "3-band resonator"
