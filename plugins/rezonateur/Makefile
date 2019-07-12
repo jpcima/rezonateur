@@ -42,7 +42,7 @@ FILES_UI  = \
 UI_TYPE = cairo
 include ../../dpf/Makefile.plugins.mk
 
-BUILD_CXX_FLAGS += -Isources -Ithirdparty/blink
+BUILD_CXX_FLAGS += -Isources -Ithirdparty/blink -Ithirdparty/caps
 
 # --------------------------------------------------------------
 # Enable all possible plugin types
