@@ -25,6 +25,21 @@ void InitParameter(uint32_t index, Parameter &parameter)
         pev[3] = ParameterEnumerationValue(3.0, "Band pass - Notch");
         break;
 
+    case pIdOversampling:
+        parameter.symbol = "oversampling";
+        parameter.name = "Oversampling";
+        parameter.hints = kParameterIsInteger;
+        parameter.ranges = ParameterRanges(1.0, 1.0, 8.0);
+        pev = new ParameterEnumerationValue[4];
+        parameter.enumValues.values = pev;
+        parameter.enumValues.count = 4;
+        parameter.enumValues.restrictedMode = true;
+        pev[0] = ParameterEnumerationValue(1.0, u8"1×");
+        pev[1] = ParameterEnumerationValue(2.0, u8"2×");
+        pev[2] = ParameterEnumerationValue(4.0, u8"4×");
+        pev[3] = ParameterEnumerationValue(8.0, u8"8×");
+        break;
+
     case pIdGain1:
         parameter.symbol = "gain1";
         parameter.name = "Low gain";

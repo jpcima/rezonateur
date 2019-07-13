@@ -24,7 +24,9 @@ RezonateurUI::RezonateurUI()
       fSkinPowerSwitch(Artwork::power_switchData, Artwork::power_switchDataSize, 2),
       fSkinLevelMonitor(Artwork::level_monitorData, Artwork::level_monitorDataSize, 31),
       fSkinTextPassMode(Artwork::text_pass_modeData, Artwork::text_pass_modeDataSize, 1),
+      fSkinTextOversampling(Artwork::text_oversamplingData, Artwork::text_oversamplingDataSize, 1),
       fSkinTextSidePassMode(Artwork::text_side_pass_modeData, Artwork::text_side_pass_modeDataSize, 1),
+      fSkinTextSideOversampling(Artwork::text_side_oversamplingData, Artwork::text_side_oversamplingDataSize, 1),
       fSkinTextBandKnobs(Artwork::text_band_knobsData, Artwork::text_band_knobsDataSize, 1),
       fSkinTextBandLow(Artwork::text_band_lowData, Artwork::text_band_lowDataSize, 1),
       fSkinTextBandMid(Artwork::text_band_midData, Artwork::text_band_midDataSize, 1),
@@ -43,7 +45,7 @@ RezonateurUI::RezonateurUI()
     fResponseView.reset(rezView);
 
     rezView->setAbsolutePos(50, 20);
-    rezView->setSize(430, 300);
+    rezView->setSize(510, 300);
 
     for (unsigned b = 0; b < 4; ++b) {
         static const ColorRGBA8 colors[4] = {
@@ -61,9 +63,12 @@ RezonateurUI::RezonateurUI()
     int xPassMode;
     int xBandKnobs[3];
     int xWetDry;
+    int xOversampling;
 
     int xOffPassMode = -12;
+    int xOffOversampling = -12;
     int xOffSidePassMode = -40;
+    int xOffSideOversampling = 20;
     int xOffBandKnobs = -2;
     int xOffPreWetDry = -2;
 
@@ -99,15 +104,24 @@ RezonateurUI::RezonateurUI()
     createSliderForParameter(fSkinYellowKnob, pIdDryGain, sx, sy);
     sx += 30;
     createSliderForParameter(fSkinRedKnob, pIdWetGain, sx, sy);
+    sx += 50;
+    xOversampling = sx;
+    createSliderForParameter(fSkinBlackKnob, pIdOversampling, sx, sy);
 
     SkinIndicator *label;
     ///
     label = new SkinIndicator(fSkinTextPassMode, this);
     fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
     label->setAbsolutePos(xPassMode + xOffPassMode, 360);
+    label = new SkinIndicator(fSkinTextOversampling, this);
+    fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
+    label->setAbsolutePos(xOversampling + xOffOversampling, 360);
     label = new SkinIndicator(fSkinTextSidePassMode, this);
     fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
     label->setAbsolutePos(xPassMode + xOffSidePassMode, 380 - 4);
+    label = new SkinIndicator(fSkinTextSideOversampling, this);
+    fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
+    label->setAbsolutePos(xOversampling + xOffSideOversampling, 380 - 4);
     ///
     label = new SkinIndicator(fSkinTextBandKnobs, this);
     fMiscWidgets.push_back(std::unique_ptr<Widget>(label));
@@ -136,14 +150,14 @@ RezonateurUI::RezonateurUI()
 
     SkinIndicator *levelMonitor = new SkinIndicator(fSkinLevelMonitor, this);
     fLevelMonitor.reset(levelMonitor);
-    levelMonitor->setAbsolutePos(420, 330);
+    levelMonitor->setAbsolutePos(500, 330);
 }
 
 RezonateurUI::~RezonateurUI()
 {
 }
 
-const unsigned RezonateurUI::ui_width = 530;
+const unsigned RezonateurUI::ui_width = 610;
 const unsigned RezonateurUI::ui_height = 500;
 
 void RezonateurUI::onDisplay()

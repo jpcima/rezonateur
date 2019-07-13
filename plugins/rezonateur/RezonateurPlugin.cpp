@@ -73,6 +73,8 @@ float RezonateurPlugin::getParameterValue(uint32_t index) const
         return fBypassed;
     case pIdMode:
         return fRez[0].getFilterMode();
+    case pIdOversampling:
+        return fRez[0].getOversampling();
     case pIdGain1:
         return fRez[0].getFilterGain(0);
     case pIdCutoff1:
@@ -111,6 +113,10 @@ void RezonateurPlugin::setParameterValue(uint32_t index, float value)
     case pIdMode:
         for (unsigned c = 0; c < NumChannels; ++c)
             fRez[c].setFilterMode((int)value);
+        break;
+    case pIdOversampling:
+        for (unsigned c = 0; c < NumChannels; ++c)
+            fRez[c].setOversampling((unsigned)value);
         break;
     case pIdGain1:
         for (unsigned c = 0; c < NumChannels; ++c)

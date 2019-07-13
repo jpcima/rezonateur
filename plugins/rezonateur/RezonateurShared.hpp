@@ -9,6 +9,8 @@ enum {
 
     pIdMode,
 
+    pIdOversampling,
+
     pIdGain1,
     pIdCutoff1,
     pIdEmph1,
