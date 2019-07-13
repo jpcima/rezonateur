@@ -68,15 +68,15 @@ void ResponseView::onDisplay()
     for (double f : frequencyStops) {
         double r = widthRatioOfFrequency(f);
         double x = r * (w - 1);
-        cairo_move_to(cr, x, 0);
-        cairo_line_to(cr, x, h);
+        cairo_move_to_pixel(cr, x, 0);
+        cairo_line_to_pixel(cr, x, h);
         cairo_stroke(cr);
     }
     for (double m : magnitudeStops) {
         double r = (m - minGain) * (1.0 / (maxGain - minGain));
         double y = (1.0 - r) * (h - 1);
-        cairo_move_to(cr, 0, y);
-        cairo_line_to(cr, w, y);
+        cairo_move_to_pixel(cr, 0, y);
+        cairo_line_to_pixel(cr, w, y);
         cairo_stroke(cr);
     }
     cairo_set_dash(cr, nullptr, 0, 0);
@@ -91,6 +91,7 @@ void ResponseView::onDisplay()
 
     ///
     unsigned mode = rez.getFilterMode();
+    cairo_set_line_width(cr, 2.0);
     cairo_set_source_rgba8(cr, fColor[mode]);
 
     bool havelasty = false;

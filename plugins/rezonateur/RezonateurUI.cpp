@@ -163,6 +163,10 @@ const unsigned RezonateurUI::ui_height = 500;
 void RezonateurUI::onDisplay()
 {
     cairo_t *cr = getParentWindow().getGraphicsContext().cairo;
+
+    // set default
+    cairo_set_line_width(cr, 1.0);
+
     cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 1.0);
     cairo_paint(cr);
 }
