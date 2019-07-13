@@ -31,14 +31,14 @@ void ResponseView::updateResponse()
 
 const double ResponseView::minFrequency = 10.0;
 const double ResponseView::maxFrequency = 20000.0;
-const double ResponseView::minGain = -40.0;
-const double ResponseView::maxGain = +20.0;
+const double ResponseView::minGain = -30.0;
+const double ResponseView::maxGain = +30.0;
 
 static const double frequencyStops[] = {
     30.0, 100.0, 300.0, 1000.0, 3000.0, 10000.0
 };
 static const double magnitudeStops[] = {
-    -30.0, -20.0, -10.0, +10.0,
+    -20.0, -10.0, +10.0, +20.0
 };
 
 void ResponseView::onDisplay()
