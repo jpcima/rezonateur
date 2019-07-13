@@ -38,8 +38,8 @@ void cairo_set_source_rgba8(cairo_t *cr, ColorRGBA8 c)
 void cairo_snap_to_pixel(cairo_t *cr, double *x, double *y)
 {
     (void)cr;
-    *x += 0.5;
-    *y += 0.5;
+    *x = std::floor(*x) + 0.5;
+    *y = std::floor(*y) + 0.5;
 }
 
 void cairo_move_to_pixel(cairo_t *cr, double x, double y)
