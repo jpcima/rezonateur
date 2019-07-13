@@ -130,7 +130,7 @@ void VAStateVariableFilter::calcFilter()
 
 static double analogSaturate(double x)
 {
-    #pragma message("TODO: simple filter analog saturation, oversampled processing")
+    // simple filter analog saturation
 
     if (x > +1)
         x = 2. / 3.;
