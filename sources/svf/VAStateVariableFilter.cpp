@@ -143,7 +143,7 @@ static double analogSaturate(double x)
 }
 
 template <int FilterType>
-void VAStateVariableFilter::processInternally(const float *input, float *output, unsigned count)
+void VAStateVariableFilter::processInternally(float gain, const float *input, float *output, unsigned count)
 {
     const double gCoeff = this->gCoeff;
     const double RCoeff = this->RCoeff;
@@ -153,7 +153,7 @@ void VAStateVariableFilter::processInternally(const float *input, float *output,
     double z2_A = this->z2_A;
 
     for (unsigned i = 0; i < count; ++i) {
-        double in = input[i];
+        double in = gain * input[i];
 
         double HP = (in - ((2.0 * RCoeff + gCoeff) * z1_A) - z2_A)
             * (1.0 / (1.0 + (2.0 * RCoeff * gCoeff) + gCoeff * gCoeff));
@@ -189,36 +189,36 @@ void VAStateVariableFilter::processInternally(const float *input, float *output,
     this->z2_A = z2_A;
 }
 
-void VAStateVariableFilter::process(const float *input, float *output, unsigned count)
+void VAStateVariableFilter::process(float gain, const float *input, float *output, unsigned count)
 {
     switch (filterType) {
     case SVFLowpass:
-        processInternally<SVFLowpass>(input, output, count);
+        processInternally<SVFLowpass>(gain, input, output, count);
         break;
     case SVFBandpass:
-        processInternally<SVFBandpass>(input, output, count);
+        processInternally<SVFBandpass>(gain, input, output, count);
         break;
     case SVFHighpass:
-        processInternally<SVFHighpass>(input, output, count);
+        processInternally<SVFHighpass>(gain, input, output, count);
         break;
     case SVFUnitGainBandpass:
-        processInternally<SVFUnitGainBandpass>(input, output, count);
+        processInternally<SVFUnitGainBandpass>(gain, input, output, count);
         break;
     case SVFBandShelving:
-        processInternally<SVFBandShelving>(input, output, count);
+        processInternally<SVFBandShelving>(gain, input, output, count);
         break;
     case SVFNotch:
-        processInternally<SVFNotch>(input, output, count);
+        processInternally<SVFNotch>(gain, input, output, count);
         break;
     case SVFAllpass:
-        processInternally<SVFAllpass>(input, output, count);
+        processInternally<SVFAllpass>(gain, input, output, count);
         break;
     case SVFPeak:
-        processInternally<SVFPeak>(input, output, count);
+        processInternally<SVFPeak>(gain, input, output, count);
         break;
     default:
         for (unsigned i = 0; i < count; ++i)
-            output[i] = input[i];
+            output[i] = gain * input[i];
     }
 }
 

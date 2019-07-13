@@ -182,15 +182,14 @@ template <class Oversampler> void Rezonateur::processWithinBufferLimit(Oversampl
 
     ///
     for (unsigned b = 0; b < 3; ++b) {
-        float g = filterGains[b];
-        fFilters[b].process(input, filterOutput, count * ratio);
+        fFilters[b].process(filterGains[b], input, filterOutput, count * ratio);
         if (b == 0) {
             for (unsigned i = 0; i < count * ratio; ++i)
-                accum[i] = g * filterOutput[i];
+                accum[i] = filterOutput[i];
         }
         else {
             for (unsigned i = 0; i < count * ratio; ++i)
-                accum[i] += g * filterOutput[i];
+                accum[i] += filterOutput[i];
         }
     }
 

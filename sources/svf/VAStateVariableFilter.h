@@ -109,7 +109,7 @@ public:
     //------------------------------------------------------------------------------
     /**    Performs the actual processing.
     */
-    void process(const float *input, float *output, unsigned count);
+    void process(float gain, const float *input, float *output, unsigned count);
 
     //------------------------------------------------------------------------------
     /**    Reset the state variables.
@@ -139,7 +139,7 @@ private:
 
     //
     template <int FilterType>
-    void processInternally(const float *input, float *output, unsigned count);
+    void processInternally(float gain, const float *input, float *output, unsigned count);
 
     //    Parameters:
     int filterType;
