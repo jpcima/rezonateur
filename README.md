@@ -22,6 +22,7 @@ Install needed packages:
 - `libx11-dev`
 - `libcairo2-dev`
 - `libjack-jackd2-dev` or `libjack-dev`
+- `mesa-common-dev`
 
 2. Check out the repository and submodules
 
