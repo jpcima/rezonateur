@@ -6,6 +6,8 @@ This resonator consists of 3 multi-mode resonant filters which cover independent
 - Mid: 300 Hz - 1.5 kHz
 - High: 1.5 kHz - 7.5 kHz
 
+This device is also known as a formant filter. Such a device was implemented on the Polymoog synthesizer.
+
 ## Download
 
 Get from [Open Build Service](https://software.opensuse.org//download.html?project=home%3Ajpcima&package=rezonateur).
