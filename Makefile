@@ -17,7 +17,7 @@ all: dgl plugins gen
 PLUGINS := rezonateur rezonateur-stereo
 
 dgl:
-	$(MAKE) -C dpf/dgl
+	$(MAKE) -C dpf/dgl ../build/libdgl-cairo.a
 
 plugins: dgl
 	$(foreach p,$(PLUGINS),$(MAKE) all -C plugins/$(p);)
