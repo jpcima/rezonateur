@@ -1,4 +1,5 @@
 #include "KnobSkin.hpp"
+#include <stdexcept>
 #include <cassert>
 
 KnobSkin::KnobSkin(const char *pngData, unsigned pngSize, unsigned imageCount)
